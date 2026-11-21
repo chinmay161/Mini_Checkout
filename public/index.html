@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Checkout</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <header class="app-header">
+      <h1>Mini Checkout</h1>
+    </header>
+
+    <main class="app-main">
+      <!-- Confirmation Block Container (rendered on successful order) -->
+      <div id="confirmation-container"></div>
+
+      <!-- Checkout and Shopping View -->
+      <div id="checkout-view">
+        <!-- Products Section -->
+        <section class="products-section" aria-labelledby="products-heading">
+          <h2 id="products-heading">Products</h2>
+          <div class="products-grid">
+            <article class="product-card" data-testid="product-notebook">
+              <div class="product-details">
+                <h3 class="product-name">Canvas Notebook</h3>
+                <p class="product-price">$12.50</p>
+              </div>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="add-notebook"
+                data-testid="add-notebook"
+                aria-label="Add Canvas Notebook to cart"
+              >Add to cart</button>
+            </article>
+
+            <article class="product-card" data-testid="product-pens">
+              <div class="product-details">
+                <h3 class="product-name">Gel Pen Set</h3>
+                <p class="product-price">$4.99</p>
+              </div>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="add-pens"
+                data-testid="add-pens"
+                aria-label="Add Gel Pen Set to cart"
+              >Add to cart</button>
+            </article>
+          </div>
+        </section>
+
+        <!-- Cart Section -->
+        <section class="cart-section" id="cart-section" aria-labelledby="cart-heading">
+          <h2 id="cart-heading">Your Cart</h2>
+          
+          <div id="cart-error-container"></div>
+
+          <div id="cart-content">
+            <div id="cart-items" class="cart-items">
+              <p data-testid="cart-empty-message" id="cart-empty-message">Your cart is empty</p>
+            </div>
+
+            <div class="order-total-bar">
+              <span class="order-total-label">Order total:</span>
+              <span class="order-total-value" id="order-total" data-testid="order-total" aria-live="polite">$0.00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Checkout Form Section -->
+        <section class="checkout-section" id="checkout-section" aria-labelledby="checkout-heading">
+          <h2 id="checkout-heading">Customer Details</h2>
+
+          <form novalidate data-testid="checkout-form" id="checkout-form">
+            <div class="form-group">
+              <label for="name-input">Full name</label>
+              <input
+                type="text"
+                id="name-input"
+                name="name"
+                data-testid="name-input"
+                autocomplete="name"
+              />
+              <div id="name-error-container"></div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="place-order"
+                data-testid="place-order"
+              >Place Order</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
