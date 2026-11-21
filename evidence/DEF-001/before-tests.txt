@@ -1,0 +1,57 @@
+Running 2 tests using 2 workers
+[chromium] › checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation
+[chromium] › checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation
+
+  1) [chromium] › checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation ───
+
+    Error: Timed out 5000ms waiting for expect(locator).toHaveCount(expected)
+
+    Locator: getByTestId('confirmation')
+    Expected: 1
+    Received: 0
+    Call log:
+      - expect.toHaveCount with timeout 5000ms
+      - waiting for getByTestId('confirmation')
+      -   locator resolved to 0 elements
+      -   unexpected value "0"
+      -   locator resolved to 0 elements
+      -   unexpected value "0"
+
+      228 |     await page.mouse.dblclick(x, y);
+      229 | 
+    > 230 |     await expect(page.getByTestId('confirmation')).toHaveCount(1);
+          |                                                    ^
+      231 |     await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+      232 |     await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
+      233 |     await expect(page.getByTestId('order-total')).not.toBeVisible();
+
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:230:52
+
+  2) [chromium] › checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation ───
+
+    Error: Timed out 5000ms waiting for expect(locator).toHaveCount(expected)
+
+    Locator: getByTestId('confirmation')
+    Expected: 1
+    Received: 0
+    Call log:
+      - expect.toHaveCount with timeout 5000ms
+      - waiting for getByTestId('confirmation')
+      -   locator resolved to 0 elements
+      -   unexpected value "0"
+      -   locator resolved to 0 elements
+      -   unexpected value "0"
+
+      251 |     await page.mouse.click(x, y);
+      252 | 
+    > 253 |     await expect(page.getByTestId('confirmation')).toHaveCount(1);
+          |                                                    ^
+      254 |     await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+      255 |     await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
+      256 |     await expect(page.getByTestId('order-total')).not.toBeVisible();
+
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:253:52
+
+  2 failed
+    [chromium] › checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation
+    [chromium] › checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation

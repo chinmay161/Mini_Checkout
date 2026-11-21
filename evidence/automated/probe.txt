@@ -1,0 +1,172 @@
+
+> mini-checkout@1.0.0 probe
+> playwright test -c playwright.exploratory.config.js
+
+
+Running 1 test using 1 worker
+
+
+=== DOUBLE-CLICK LAYOUT-SHIFT PROBE RESULTS ===
+| Viewport   | Req Y | Actual (X, Y) | Mode   | Classification   |
+|------------|-------|---------------|--------|------------------|
+| 1920x1080  |    60 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |    60 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   120 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   120 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   180 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   180 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   240 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   240 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   300 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   300 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   360 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   360 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   420 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   420 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   480 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   480 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   540 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   540 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1920x1080  |   600 | (705, 895)    | double | ONE_CONFIRMATION |
+| 1920x1080  |   600 | (705, 895)    | triple | ONE_CONFIRMATION |
+| 1366x768   |    60 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |    60 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   120 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   120 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   180 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   180 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   240 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   240 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   300 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   300 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   360 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   360 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   420 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   420 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   480 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   480 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   540 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   540 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1366x768   |   600 | (428, 698)    | double | ONE_CONFIRMATION |
+| 1366x768   |   600 | (428, 698)    | triple | ONE_CONFIRMATION |
+| 1280x720   |    60 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |    60 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   120 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   120 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   180 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   180 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   240 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   240 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   300 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   300 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   360 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   360 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   420 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   420 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   480 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   480 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   540 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   540 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x720   |   600 | (385, 650)    | double | ONE_CONFIRMATION |
+| 1280x720   |   600 | (385, 650)    | triple | ONE_CONFIRMATION |
+| 1280x500   |    60 | (385, 430)    | double | ONE_CONFIRMATION |
+| 1280x500   |    60 | (385, 430)    | triple | ONE_CONFIRMATION |
+| 1280x500   |   120 | (385, 430)    | double | ONE_CONFIRMATION |
+| 1280x500   |   120 | (385, 430)    | triple | ONE_CONFIRMATION |
+| 1280x500   |   180 | (385, 430)    | double | ONE_CONFIRMATION |
+| 1280x500   |   180 | (385, 430)    | triple | ONE_CONFIRMATION |
+| 1280x500   |   240 | (385, 430)    | double | ONE_CONFIRMATION |
+| 1280x500   |   240 | (385, 430)    | triple | ONE_CONFIRMATION |
+| 1280x500   |   300 | (385, 430)    | double | ONE_CONFIRMATION |
+| 1280x500   |   300 | (385, 430)    | triple | ONE_CONFIRMATION |
+| 1280x500   |   360 | (385, 430)    | double | ONE_CONFIRMATION |
+| 1280x500   |   360 | (385, 430)    | triple | ONE_CONFIRMATION |
+| 1280x500   |   420 | (385, 430)    | double | ONE_CONFIRMATION |
+| 1280x500   |   420 | (385, 430)    | triple | ONE_CONFIRMATION |
+| 800x600    |    60 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |    60 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   120 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |   120 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   180 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |   180 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   240 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |   240 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   300 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |   300 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   360 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |   360 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   420 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |   420 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   480 | (145, 530)    | double | ONE_CONFIRMATION |
+| 800x600    |   480 | (145, 530)    | triple | ONE_CONFIRMATION |
+| 800x600    |   540 | (145, 540)    | double | ONE_CONFIRMATION |
+| 800x600    |   540 | (145, 540)    | triple | ONE_CONFIRMATION |
+| 390x844    |    60 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |    60 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   120 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   120 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   180 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   180 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   240 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   240 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   300 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   300 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   360 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   360 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   420 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   420 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   480 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   480 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   540 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   540 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 390x844    |   600 | (101, 774)    | double | ONE_CONFIRMATION |
+| 390x844    |   600 | (101, 774)    | triple | ONE_CONFIRMATION |
+| 375x667    |    60 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |    60 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   120 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   120 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   180 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   180 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   240 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   240 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   300 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   300 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   360 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   360 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   420 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   420 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   480 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   480 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   540 | (101, 597)    | double | ONE_CONFIRMATION |
+| 375x667    |   540 | (101, 597)    | triple | ONE_CONFIRMATION |
+| 375x667    |   600 | (101, 600)    | double | ONE_CONFIRMATION |
+| 375x667    |   600 | (101, 600)    | triple | ONE_CONFIRMATION |
+| 360x640    |    60 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |    60 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   120 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   120 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   180 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   180 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   240 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   240 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   300 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   300 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   360 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   360 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   420 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   420 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   480 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   480 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   540 | (101, 570)    | double | ONE_CONFIRMATION |
+| 360x640    |   540 | (101, 570)    | triple | ONE_CONFIRMATION |
+| 360x640    |   600 | (101, 600)    | double | ONE_CONFIRMATION |
+| 360x640    |   600 | (101, 600)    | triple | ONE_CONFIRMATION |
+
+=== TOTALS PER CLASSIFICATION ===
+ONE_CONFIRMATION : 152
+CONFIRMATION_LOST: 0
+MULTIPLE         : 0
+OTHER            : 0
+TOTAL ATTEMPTS   : 152
+DISTINCT SCENARIOS TESTED: 22
+  ok 1 [chromium] › exploratory\double-click-probe.spec.js:6:3 › Double-click layout-shift probe › sweep viewports, target Y coordinates, and click modes (22.8s)

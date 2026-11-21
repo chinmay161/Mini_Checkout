@@ -1,0 +1,138 @@
+# Mini Checkout and Browser Test Suite
+
+## Overview
+Mini Checkout is a lightweight, single-page checkout application designed for a small online store. Built strictly with vanilla HTML5, CSS3, and JavaScript, the application runs on a zero-dependency Node.js static server. It provides full cart manipulation with integer-cent monetary precision, immediate field and cart validation with accessible live regions, robust synchronous double-submission prevention, and an automated end-to-end browser test suite powered by Playwright Chromium.
+
+## Requirements
+- **Node.js**: `v24.4.1` (Playwright requires Node.js `>=20` as defined in `node_modules/@playwright/test/package.json`)
+- **npm**: `11.4.2`
+- **Playwright**: `1.65.1`
+- **Browser**: Chromium `159.0.8154.6` (installed via Playwright)
+
+## Run the App
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the local server:
+   ```bash
+   npm start
+   ```
+3. Open your browser to [http://localhost:3000](http://localhost:3000). To override the default port, provide the `PORT` environment variable (e.g. `PORT=3050 node server.js`).
+
+## Run the Browser Tests
+1. Install browser binaries (if not already installed):
+   ```bash
+   npx playwright install chromium
+   ```
+2. Run the automated test suite:
+   ```bash
+   npm test
+   ```
+3. View the HTML test report:
+   ```bash
+   npm run report
+   ```
+4. Run tests interactively in headed mode:
+   ```bash
+   npm run test:headed
+   ```
+5. Run an individual test by exact title or pattern:
+   ```bash
+   npx playwright test -g "successful checkout shows a single order confirmation with a reference"
+   ```
+
+*Note on cross-platform execution*: Windows PowerShell, macOS, and Linux use identical `npm` and `npx` commands. Playwright tests automatically spin up their own web server instance on port `3100` (`reuseExistingServer: !process.env.CI`). If a stale process remains bound to port `3100`, terminate it if test results look anomalous.
+
+## Project Structure
+```
+mini-checkout/
+├── package.json                          # Scripts and @playwright/test devDependency
+├── package-lock.json
+├── server.js                             # Zero-dependency Node.js static file server
+├── playwright.config.js                  # Playwright Chromium test configuration
+├── playwright.exploratory.config.js      # Configuration for the exploratory probe
+├── public/
+│   ├── index.html                        # Semantic HTML with accessibility handles and testids
+│   ├── styles.css                        # CSS layout, focus outlines, and responsive styles
+│   └── app.js                           # State, integer cents math, validation, and confirmation
+├── tests/
+│   └── checkout.spec.js                  # 11 automated Playwright Chromium end-to-end tests
+├── exploratory/
+│   ├── double-click-probe.spec.js        # Viewport and layout-shift exploratory probe
+│   └── evidence/                         # Baseline probe failure screenshots
+│       ├── 1280x500-y430-double.png
+│       └── 1280x500-y430-triple.png
+├── evidence/
+│   ├── automated/                        # Verbatim outputs from automated test suites
+│   ├── DEF-001/                          # Defect DEF-001 before/after test logs and screenshots
+│   ├── manual/                           # Manual exploratory test run evidence screenshots
+│   └── mutation/                         # Mutation testing runs and restored suite verification
+└── docs/
+    ├── TEST_PLAN.md                      # Risk register, coverage matrix, and test specifications
+    └── TEST_RESULTS.md                   # Automated, manual, mutation, and defect write-ups
+```
+
+## Mapping of Required Checks and Tests
+
+The challenge requires three fundamental user-facing guarantees:
+
+1. **Check 1: Customers must see the correct total**
+   - [`changing quantities updates line totals and the exact order total`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L60-L81) (Lines 60–81)
+
+2. **Check 2: Customers must know which fields are missing**
+   - [`missing name blocks checkout and keeps the cart`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L36-L58) (Lines 36–58)
+   - [`empty cart blocks checkout`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L83-L93) (Lines 83–93)
+
+3. **Check 3: Customers must get exactly ONE clear order confirmation**
+   - [`successful checkout shows a single order confirmation with a reference`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L13-L34) (Lines 13–34)
+   - [`double submit produces exactly one confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L95-L109) (Lines 95–109)
+   - [`scripted rapid submits still produce one confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L111-L143) (Lines 111–143)
+
+### Additional Automated Coverage & Bonus Tests
+- [`invalid quantity reverts to the last valid value`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L145-L165) (Lines 145–165)
+- [`remove and start-new-order reset`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L167-L199) (Lines 167–199)
+- [`empty cart and blank name show both messages and focus the first problem`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L201-L213) (Lines 201–213)
+- [`rapid double-click on Place Order in a short window keeps the confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L215-L234) (Lines 215–234)
+- [`rapid triple-click on Place Order in a short window keeps the confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L236-L257) (Lines 236–257)
+
+## Manual Tests
+For human-driven testing scenarios (empty cart error appearance, desktop double-click, and phone viewport gestures), detailed instructions and results are documented in [docs/TEST_PLAN.md](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/docs/TEST_PLAN.md#manual-test-cases) and [docs/TEST_RESULTS.md](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/docs/TEST_RESULTS.md#4-tester-supplied-manual-results).
+
+## Exploratory Probe
+To investigate layout shift and click-through anomalies under extreme conditions, an exploratory test probe is provided:
+```bash
+npm run probe
+```
+The probe sweeps 8 distinct viewport resolutions across 10 target vertical coordinates with rapid double and triple click sequences using real OS-level mouse events (`page.mouse`). The probe is a diagnostic measurement tool rather than a release gate; in short windows, requested Y values naturally clamp to the scroll boundary. Following the DEF-001 fix, the probe executes 152 attempts across 22 distinct layout scenarios with zero lost confirmations.
+
+## Design Decisions
+- **Integer Cents Precision**: All financial calculations are stored and evaluated in whole integer cents (e.g. Notebook = 1250 cents, Pens = 499 cents). Dollar formatting occurs strictly at the display boundary via `Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })`, avoiding floating-point rounding errors.
+- **Persistent Place Order Button**: The "Place Order" button remains enabled when the cart or name is invalid, ensuring users receive immediate actionable validation feedback and accessibility alerts upon clicking.
+- **Synchronous Double-Submit Guard**: `orderPlaced` and `isSubmitting` guard flags are evaluated and updated synchronously at the very top of the submit handler, discarding secondary submission events before asynchronous tasks occur.
+- **Stateless Clean State**: No `localStorage`, `sessionStorage`, or cookies are utilized. Refreshing the browser guaranteed a pristine, initial state.
+
+## Known Limitations
+- **Chromium Only**: Test automation targets Playwright Chromium exclusively, as specified in the project scope. Cross-browser testing across Firefox or WebKit has not been executed.
+- **Screen Reader Audit**: While semantic HTML elements, ARIA alert roles, `aria-invalid`, `aria-describedby`, and focus management are implemented, no formal physical screen-reader audit (e.g. with NVDA or VoiceOver) has been performed.
+- **DEF-001 Fix Debounce**: The fix for layout-shift click-through disables the "Start new order" button for 600 ms upon mounting. An intentional click by a user within that initial 600 ms window is ignored.
+- **Client-Side Order Generation**: There is no persistence backend or payment gateway. Order reference codes (`ORD-...`) are generated locally via `crypto.getRandomValues()` and are not saved to a remote database.
+
+## Reproducing DEF-001
+Defect DEF-001 (confirmation lost due to layout collapse shifting "Start new order" under the cursor during a rapid double-click in a short window) can be verified and reproduced with git:
+1. Restore the unfixed baseline application script:
+   ```bash
+   git checkout e4a7e45 -- public/app.js
+   ```
+2. Run the regression test suite (it will fail with received confirmation count 0):
+   ```bash
+   npx playwright test -g "short window"
+   ```
+3. Restore the fixed code:
+   ```bash
+   git checkout HEAD -- public/app.js
+   ```
+4. Re-run the regression tests (both tests pass):
+   ```bash
+   npx playwright test -g "short window"
+   ```

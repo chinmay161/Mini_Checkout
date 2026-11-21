@@ -1,0 +1,6 @@
+OS:  Microsoft Windows [Version 10.0.26300.10075]
+Node.js: v24.4.1
+npm: 11.4.2
+Playwright: Version 1.65.1
+Chromium: 159.0.8154.6
+Playwright Node engines requirement: >=20 (from node_modules/@playwright/test/package.json)

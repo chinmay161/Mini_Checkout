@@ -1,0 +1,4 @@
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart (7.1s)

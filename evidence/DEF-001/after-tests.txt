@@ -1,0 +1,16 @@
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   debug.log
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	evidence/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+Running 2 tests using 2 workers
+
+  ok 2 [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation (2.2s)
+  ok 1 [chromium] › tests\checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation (2.3s)
