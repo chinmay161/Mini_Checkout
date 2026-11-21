@@ -411,6 +411,12 @@ function renderConfirmation(orderRef, customerName) {
 
   const newOrderBtn = confirmationEl.querySelector('#new-order');
   newOrderBtn.addEventListener('click', handleNewOrder);
+
+  // Disable button briefly: a late second click from a rapid double-click can land on this button after the layout shifts
+  newOrderBtn.disabled = true;
+  setTimeout(() => {
+    newOrderBtn.disabled = false;
+  }, 600);
 }
 
 // Start new order reset

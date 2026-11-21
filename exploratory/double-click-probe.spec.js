@@ -33,9 +33,6 @@ test.describe('Double-click layout-shift probe', () => {
       OTHER: 0,
     };
 
-    let headingFocusedCount = 0;
-    let headingCheckedCount = 0;
-
     for (const vp of viewports) {
       const validYs = targetYs.filter((y) => y < vp.height - 30);
 
@@ -113,10 +110,6 @@ test.describe('Double-click layout-shift probe', () => {
           let classification = 'OTHER';
           if (outcome.confirmationCount === 1) {
             classification = 'ONE_CONFIRMATION';
-            headingCheckedCount++;
-            if (outcome.isHeadingFocused) {
-              headingFocusedCount++;
-            }
           } else if (outcome.confirmationCount === 0) {
             classification = 'CONFIRMATION_LOST';
           } else if (outcome.confirmationCount > 1) {
@@ -146,6 +139,8 @@ test.describe('Double-click layout-shift probe', () => {
       }
     }
 
+    const distinctScenarios = new Set(results.map(r => `${r.viewport}|${r.actualY}|${r.mode}`)).size;
+
     // Print compact table
     console.log('\n=== DOUBLE-CLICK LAYOUT-SHIFT PROBE RESULTS ===');
     console.log('| Viewport   | Req Y | Actual (X, Y) | Mode   | Classification   |');
@@ -165,6 +160,6 @@ test.describe('Double-click layout-shift probe', () => {
     console.log(`MULTIPLE         : ${totals.MULTIPLE}`);
     console.log(`OTHER            : ${totals.OTHER}`);
     console.log(`TOTAL ATTEMPTS   : ${results.length}`);
-    console.log(`CONFIRMATION HEADING FOCUSED: ${headingFocusedCount} / ${headingCheckedCount}`);
+    console.log(`DISTINCT SCENARIOS TESTED: ${distinctScenarios}`);
   });
 });

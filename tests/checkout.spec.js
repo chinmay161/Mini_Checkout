@@ -211,3 +211,47 @@ test('empty cart and blank name show both messages and focus the first problem',
   await expect(page.getByTestId('cart-error')).toBeFocused();
   await expect(page.getByTestId('order-total')).toHaveText('$0.00');
 });
+
+test('rapid double-click on Place Order in a short window keeps the confirmation', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 500 });
+  await page.getByTestId('add-notebook').click();
+  await expect(page.getByTestId('cart-line-notebook')).toBeVisible();
+
+  await page.getByTestId('name-input').fill('Asha Rao');
+  await expect(page.getByTestId('name-input')).toHaveValue('Asha Rao');
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  const box = await page.getByTestId('place-order').boundingBox();
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+
+  await page.mouse.dblclick(x, y);
+
+  await expect(page.getByTestId('confirmation')).toHaveCount(1);
+  await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+  await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
+  await expect(page.getByTestId('order-total')).not.toBeVisible();
+});
+
+test('rapid triple-click on Place Order in a short window keeps the confirmation', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 500 });
+  await page.getByTestId('add-notebook').click();
+  await expect(page.getByTestId('cart-line-notebook')).toBeVisible();
+
+  await page.getByTestId('name-input').fill('Asha Rao');
+  await expect(page.getByTestId('name-input')).toHaveValue('Asha Rao');
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  const box = await page.getByTestId('place-order').boundingBox();
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+
+  await page.mouse.click(x, y);
+  await page.mouse.click(x, y);
+  await page.mouse.click(x, y);
+
+  await expect(page.getByTestId('confirmation')).toHaveCount(1);
+  await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+  await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
+  await expect(page.getByTestId('order-total')).not.toBeVisible();
+});
