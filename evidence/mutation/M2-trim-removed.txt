@@ -1,4 +1,14 @@
-
 Running 1 test using 1 worker
-
   x  1 [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart (7.1s)
+
+Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+
+Locator: getByTestId('name-error')
+Expected: visible
+Received: <element(s) not found>
+
+  45 |   await page.getByTestId('place-order').click();
+  46 | 
+> 47 |   await expect(page.getByTestId('name-error')).toBeVisible();
+     |                                                ^
+  48 |   await expect(page.getByTestId('name-error')).toHaveText('Please enter your full name.');

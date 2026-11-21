@@ -83,18 +83,14 @@ mini-checkout/
 
 ## Automated Test Suite
 
-The test suite prominently implements the three required challenge checks in exact order:
+### The three required checks (from the brief)
+1. Successful checkout produces a confirmation -> [`successful checkout shows a single order confirmation with a reference`](tests/checkout.spec.js)
+2. A missing field blocks checkout -> [`missing name blocks checkout and keeps the cart`](tests/checkout.spec.js)
+3. A quantity change updates the exact total -> [`changing quantities updates line totals and the exact order total`](tests/checkout.spec.js)
 
-1. **successful checkout with items and total calculation**:
-   - [`successful checkout shows a single order confirmation with a reference`](tests/checkout.spec.js)
-2. **missing name displays validation error and keeps cart intact**:
-   - [`missing name blocks checkout and keeps the cart`](tests/checkout.spec.js)
-3. **rapid double-click on Place Order results in exactly one confirmation**:
-   - [`double submit produces exactly one confirmation`](tests/checkout.spec.js)
-
-12 additional tests cover the rest of the matrix, including edge cases, regression handling, layout shifts, security, and responsive styling:
-- [`changing quantities updates line totals and the exact order total`](tests/checkout.spec.js)
+### Additional automated tests (12)
 - [`empty cart blocks checkout`](tests/checkout.spec.js)
+- [`double submit produces exactly one confirmation`](tests/checkout.spec.js)
 - [`scripted rapid submits still produce one confirmation`](tests/checkout.spec.js)
 - [`invalid quantity reverts to the last valid value`](tests/checkout.spec.js)
 - [`remove and start-new-order reset`](tests/checkout.spec.js)
@@ -114,7 +110,7 @@ To investigate layout shift and click-through anomalies under extreme conditions
 ```bash
 npm run probe
 ```
-The probe sweeps 8 distinct viewport resolutions across 10 target vertical coordinates with rapid double and triple click sequences using real OS-level mouse events (`page.mouse`). The probe is a diagnostic measurement tool rather than a release gate; in short windows, requested Y values naturally clamp to the scroll boundary. Following the DEF-001 fix, the probe executes 152 attempts across 22 distinct layout scenarios with zero lost confirmations.
+The probe sweeps 8 distinct viewport resolutions across 10 target vertical coordinates with rapid double and triple click sequences using browser-level input events sent through the Chrome DevTools Protocol (`page.mouse`). The probe is a diagnostic measurement tool rather than a release gate; in short windows, requested Y values naturally clamp to the scroll boundary. Following the DEF-001 fix, the probe executes 152 attempts across 22 distinct layout scenarios with zero lost confirmations.
 
 ## Design Decisions
 - **Integer Cents Precision**: All financial calculations are stored and evaluated in whole integer cents (e.g. Notebook = 1250 cents, Pens = 499 cents). Dollar formatting occurs strictly at the display boundary via `Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })`, avoiding floating-point rounding errors.

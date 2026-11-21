@@ -76,3 +76,5 @@ Running 75 tests using 6 workers
   ok 74 [chromium] › tests\checkout.spec.js:281:1 › pressing Enter in the name field places the order once (1.0s)
   ok 75 [chromium] › tests\checkout.spec.js:295:1 › errors clear as the customer fixes them (1.1s)
   ok 68 [chromium] › tests\checkout.spec.js:167:1 › remove and start-new-order reset (2.8s)
+
+  75 passed (10.4s)

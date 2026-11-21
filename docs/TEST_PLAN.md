@@ -15,9 +15,6 @@
 - Cross-browser automation beyond Chromium (Firefox, WebKit).
 - User authentication, session storage, cookies, or local storage.
 
-### 1.3 Known Limitations of the Tests
-The short-window tests 10 and 11 depend on the page layout at 1280x500 and on the 600 ms disabled window; a large layout change could make them pass for the wrong reason, so they should be re-checked (re-run the baseline red check) after any layout change.
-
 ---
 
 ## 2. Risk Register
@@ -51,7 +48,7 @@ The short-window tests 10 and 11 depend on the page layout at 1280x500 and on th
 | **Duplicate order on submit** | `double submit produces exactly one confirmation`<br>`scripted rapid submits still produce one confirmation` | `MT-2a`, `MT-2b` | Covered |
 | **Confirmation lost (DEF-001)** | `rapid double-click on Place Order in a short window keeps the confirmation`<br>`rapid triple-click on Place Order in a short window keeps the confirmation` | `MT-3` | Covered |
 | **Customer input lost** | `missing name blocks checkout and keeps the cart`<br>`empty cart blocks checkout` | `MT-1` | Covered |
-| **Invalid quantity input** | `invalid quantity reverts to the last valid value` | — | Covered |
+| **Invalid quantity input** | `invalid quantity reverts to the last valid value` | — | Covered (+ Mutation M6) |
 | **Stale state on reset** | `remove and start-new-order reset` | — | Covered |
 | **Focus and ARIA handling** | `successful checkout shows a single order confirmation with a reference`<br>`missing name blocks checkout and keeps the cart`<br>`empty cart and blank name show both messages and focus the first problem` | — | Covered |
 | **HTML injection in name** | `customer name is shown as text and never rendered as HTML` | — | Covered (+ Mutation M3) |
@@ -188,8 +185,9 @@ All automated tests are located in [`tests/checkout.spec.js`](../tests/checkout.
 - **Title**: `invalid quantity reverts to the last valid value`
 - **Steps**:
   1. Add Canvas Notebook (qty 1, total $12.50).
-  2. Fill qty input with `'0'`; assert total is still `'$12.50'`. Blur via `Tab`.
-  3. Fill qty input with `'100'`; assert total is still `'$12.50'`. Blur via `Tab`.
+  2. Fill qty input with `'0'`; assert total is still `'$12.50'`. Blur via `Tab`; assert qty value reverts to `'1'` and total remains `'$12.50'`.
+  3. Fill qty input with `'100'`; assert total is still `'$12.50'`. Blur via `Tab`; assert qty value reverts to `'1'` and total remains `'$12.50'`.
+  4. Assert body does not contain `'NaN'`.
 - **Expected Results**:
   - Mid-typing invalid values does not change order total.
   - On blur, value reverts to last valid integer (`'1'`).
@@ -200,6 +198,14 @@ All automated tests are located in [`tests/checkout.spec.js`](../tests/checkout.
   await expect(page.getByTestId('order-total')).toHaveText('$12.50');
   await page.getByTestId('qty-notebook').press('Tab');
   await expect(page.getByTestId('qty-notebook')).toHaveValue('1');
+  await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+
+  await page.getByTestId('qty-notebook').fill('100');
+  await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+  await page.getByTestId('qty-notebook').press('Tab');
+  await expect(page.getByTestId('qty-notebook')).toHaveValue('1');
+  await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+
   await expect(page.locator('body')).not.toContainText('NaN');
   ```
 
@@ -395,12 +401,6 @@ All automated tests are located in [`tests/checkout.spec.js`](../tests/checkout.
   - The "Start new order" button is disabled for 600 ms, absorbing the second click.
   - Confirmation card remains displayed (`document.querySelectorAll('[data-testid="confirmation"]').length === 1`).
 
-### 5.4 Known Limitations of the Tests
-- **Keyboard Event Simulation**: Playwright's `locator.fill()` directly updates the input value and dispatches `input` and `change` DOM events, but it does not emit the full sequence of individual physical keyboard events (`keydown`, `keypress`, `keyup`) that an end-user typing keystroke-by-keystroke generates.
-- **Assumed Reaction Time Threshold**: The 600 ms disabled delay on the "Start new order" button is an assumed threshold designed to exceed trailing multi-click intervals while remaining imperceptible to normal human task switching; it is assumed rather than experimentally measured against empirical human reaction times.
-- **Storage Absence Verification**: Clean state behavior upon page refresh is verified by reloading the single-page application in tests, but the strict absence of `localStorage`, `sessionStorage`, and cookies is confirmed via architectural constraints and code inspection rather than an automated browser storage crawler/probe.
-- **Layout Sensitivity for DEF-001**: Regression tests TC-10 and TC-11 depend on the specific element geometry and layout at viewport 1280x500. Significant visual redesigns could alter hit-target alignment and should be validated against the baseline red check.
-
 ---
 
 ## 6. Entry and Exit Criteria & Defect Reporting
@@ -415,6 +415,7 @@ All automated tests are located in [`tests/checkout.spec.js`](../tests/checkout.
 - Stress test `npx playwright test --repeat-each=5` completes with 75/75 passes (0 flakes).
 - Single-worker isolation test `npx playwright test --workers=1` completes with 15/15 passes.
 - Exploratory probe `npm run probe` completes with `CONFIRMATION_LOST: 0`.
+- All 6 mutation checks (M1 through M6) fail as expected against modified application code and restore cleanly.
 - Manual verification scenarios MT-1, MT-2a, MT-2b, and MT-3 pass.
 
 ### 6.3 Defect Reporting Protocol
@@ -425,3 +426,11 @@ When a defect is identified:
 4. Author a failing automated regression test first to prove defect presence (Red).
 5. Apply isolated fix in application code and verify regression test passes (Green).
 6. Document root-cause analysis and residual risk in [TEST_RESULTS.md](TEST_RESULTS.md).
+
+---
+
+## 7. Known limitations of the tests
+- Playwright's `fill()` does not emit individual key events (`keydown`, `keypress`, `keyup`) that an end-user typing keystroke-by-keystroke generates.
+- The short-window regression tests (TC-10, TC-11) depend on page geometry at 1280x500 and on the 600 ms window and must be re-checked against the baseline after any layout change.
+- The 600 ms threshold is assumed, not measured.
+- Absence of `localStorage`, `sessionStorage`, and cookies is confirmed by code inspection, not by a test.

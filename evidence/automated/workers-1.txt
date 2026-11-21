@@ -16,3 +16,5 @@ Running 15 tests using 1 worker
   ok 13 [chromium] › tests\checkout.spec.js:270:1 › a very long unbroken name stays inside the confirmation card (393ms)
   ok 14 [chromium] › tests\checkout.spec.js:281:1 › pressing Enter in the name field places the order once (469ms)
   ok 15 [chromium] › tests\checkout.spec.js:295:1 › errors clear as the customer fixes them (436ms)
+
+  15 passed (7.0s)

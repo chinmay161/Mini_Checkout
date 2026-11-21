@@ -1,4 +1,12 @@
-
 Running 1 test using 1 worker
+  x  1 [chromium] › tests\checkout.spec.js:269:1 › a very long unbroken name stays inside the confirmation card (2.0s)
 
-  x  1 [chromium] › tests\checkout.spec.js:270:1 › a very long unbroken name stays inside the confirmation card (2.0s)
+Error: expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 375
+Received:    2300
+
+  276 |   const nameBox = await page.getByTestId('confirmation-name').boundingBox();
+  277 |   const cardBox = await page.getByTestId('confirmation').boundingBox();
+> 278 |   expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1);
+      |                                     ^

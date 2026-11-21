@@ -15,13 +15,13 @@
 
 ## 2. Automated Test Execution Results
 
-The automated test suite was executed across multiple worker configurations and repeat runs. Real test counts and durations copied from the evidence files:
+The automated test suite was executed across multiple worker configurations and repeat runs. Real test counts copied from the evidence files:
 
-| Test Run Type | Command | Total Tests | Passed | Failed | Flakes | Duration | Evidence File |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Full Test Suite** | `npm test` | 15 | 15 | 0 | 0 | 3.4s | [evidence/automated/npm-test.txt](../evidence/automated/npm-test.txt) |
-| **Stability Run** | `npx playwright test --repeat-each=5` | 75 | 75 | 0 | 0 | 10.4s | [evidence/automated/repeat-each-5.txt](../evidence/automated/repeat-each-5.txt) |
-| **Isolation Run** | `npx playwright test --workers=1` | 15 | 15 | 0 | 0 | 7.0s | [evidence/automated/workers-1.txt](../evidence/automated/workers-1.txt) |
+| Test Run Type | Command | Total Tests | Passed | Failed | Flakes | Evidence File |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Full Test Suite** | `npm test` | 15 | 15 | 0 | 0 | [evidence/automated/npm-test.txt](../evidence/automated/npm-test.txt) |
+| **Stability Run** | `npx playwright test --repeat-each=5` | 75 | 75 | 0 | 0 | [evidence/automated/repeat-each-5.txt](../evidence/automated/repeat-each-5.txt) |
+| **Isolation Run** | `npx playwright test --workers=1` | 15 | 15 | 0 | 0 | [evidence/automated/workers-1.txt](../evidence/automated/workers-1.txt) |
 
 ### 2.1 Exploratory Probe Results
 The exploratory layout probe executes a matrix of viewports, vertical click coordinates, and click modes using real mouse input (`page.mouse`):
@@ -33,7 +33,6 @@ The exploratory layout probe executes a matrix of viewports, vertical click coor
   - `OTHER`: 0
   - `TOTAL ATTEMPTS`: 152
   - `DISTINCT SCENARIOS TESTED`: 22
-- **Duration**: 22.5s
 - **Evidence File**: [evidence/automated/probe.txt](../evidence/automated/probe.txt)
 
 > **Plain-language note on probe coverage**: The 152 probe rows overstate independent coverage because requested Y coordinates frequently clamp to the page scroll boundary (`document.body.scrollHeight`). On short pages or small viewports, multiple requested Y values target the exact same bottom position (actual coordinates). The probe is a diagnostic measurement tool rather than a release gate, and these numbers accurately reflect the live hit-testing behavior of the layout after the DEF-001 fix.
@@ -42,7 +41,7 @@ The exploratory layout probe executes a matrix of viewports, vertical click coor
 
 ## 3. Mutation Checks
 
-Five mutations were applied across `public/app.js` and `public/styles.css` to verify that the test suite detects critical regressions.
+Six mutations were applied across `public/app.js` and `public/styles.css` to verify that the test suite detects critical regressions.
 
 ### Mutation M1: Submit Guard Removal
 - **Change**: Commented out the early double-submit guard in `public/app.js`:
@@ -54,12 +53,18 @@ Five mutations were applied across `public/app.js` and `public/styles.css` to ve
 - **Command**: `npx playwright test -g "scripted rapid submits"`
 - **Result**: **FAILED** (as expected)
 - **Failing Test**: `scripted rapid submits still produce one confirmation` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
-- **Failing Assertion**:
+- **Failing Output**:
   ```
-  expect(result.after).toBe(result.first)
+  Error: expect(received).toBe(expected) // Object.is equality
+
+  Expected: "ORD-ABCDEFGH"
+  Received: "ORD-JKMNPQRS"
+
+    136 |   expect(result.first).toMatch(ordRegex);
+  > 137 |   expect(result.after).toBe(result.first);
+        |                        ^
+    138 |   expect(result.count).toBe(1);
   ```
-  - **Expected**: First generated order reference (e.g. `"ORD-..."`)
-  - **Received**: A newly regenerated order reference from the second submission attempt
 - **Evidence File**: [evidence/mutation/M1-guard-removed.txt](../evidence/mutation/M1-guard-removed.txt)
 
 ### Mutation M2: Name Trimming Removal
@@ -70,12 +75,20 @@ Five mutations were applied across `public/app.js` and `public/styles.css` to ve
 - **Command**: `npx playwright test -g "missing name"`
 - **Result**: **FAILED** (as expected)
 - **Failing Test**: `missing name blocks checkout and keeps the cart` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
-- **Failing Assertion**:
+- **Failing Output**:
   ```
-  await expect(page.getByTestId('name-error')).toBeVisible()
+  Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+
+  Locator: getByTestId('name-error')
+  Expected: visible
+  Received: <element(s) not found>
+
+    45 |   await page.getByTestId('place-order').click();
+    46 | 
+  > 47 |   await expect(page.getByTestId('name-error')).toBeVisible();
+       |                                                ^
+    48 |   await expect(page.getByTestId('name-error')).toHaveText('Please enter your full name.');
   ```
-  - **Expected**: Visible `#name-error` element
-  - **Received**: Element not visible (timed out after 5000ms because raw string `"   "` with length 3 was erroneously accepted as valid, placing the order instead of blocking)
 - **Evidence File**: [evidence/mutation/M2-trim-removed.txt](../evidence/mutation/M2-trim-removed.txt)
 
 ### Mutation M3: HTML Escaping Removal
@@ -83,12 +96,29 @@ Five mutations were applied across `public/app.js` and `public/styles.css` to ve
 - **Command**: `npx playwright test -g "shown as text"`
 - **Result**: **FAILED** (as expected)
 - **Failing Test**: `customer name is shown as text and never rendered as HTML` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
-- **Failing Assertion**:
+- **Failing Output**:
+  The assertion verifying text rendering failed FIRST on line 265; the subsequent `__xss` poll line was never reached:
   ```
-  await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined()
+  Error: expect(locator).toHaveText(expected) failed
+
+  Locator:  getByTestId('confirmation-name')
+  Expected: "<img src=x onerror=\"window.__xss=1\">Asha"
+  Received: "Asha"
+  Timeout:  5000ms
+
+  Call log:
+    - Expect "toHaveText" getByTestId('confirmation-name') with timeout 5000ms
+    - waiting for getByTestId('confirmation-name')
+      14 × locator resolved to <span id="confirmation-name" data-testid="confirmation-name">...</span>
+         - unexpected value "Asha"
+
+    263 |   await page.getByTestId('place-order').click();
+    264 | 
+  > 265 |   await expect(page.getByTestId('confirmation-name')).toHaveText('<img src=x onerror="window.__xss=1">Asha');
+        |                                                       ^
+    266 |   await expect(page.locator('[data-testid="confirmation"] img')).toHaveCount(0);
+    267 |   await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined();
   ```
-  - **Expected**: `undefined` (no injected script execution)
-  - **Received**: `1` (the unescaped payload `<img src=x onerror="window.__xss=1">Asha` executed its onerror handler)
 - **Evidence File**: [evidence/mutation/M3-escape-removed.txt](../evidence/mutation/M3-escape-removed.txt)
 
 ### Mutation M4: Unbroken Name Wrap Removal
@@ -96,12 +126,18 @@ Five mutations were applied across `public/app.js` and `public/styles.css` to ve
 - **Command**: `npx playwright test -g "long unbroken name"`
 - **Result**: **FAILED** (as expected)
 - **Failing Test**: `a very long unbroken name stays inside the confirmation card` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
-- **Failing Assertion**:
+- **Failing Output**:
   ```
-  expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1)
+  Error: expect(received).toBeLessThanOrEqual(expected)
+
+  Expected: <= 375
+  Received:    2300
+
+    276 |   const nameBox = await page.getByTestId('confirmation-name').boundingBox();
+    277 |   const cardBox = await page.getByTestId('confirmation').boundingBox();
+  > 278 |   expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1);
+        |                                     ^
   ```
-  - **Expected**: `nameBox.x + nameBox.width` <= `cardBox.x + cardBox.width + 1` (within card boundaries)
-  - **Received**: `nameBox.width` overflowed horizontal boundaries of the card container on mobile viewport (390px)
 - **Evidence File**: [evidence/mutation/M4-wrap-removed.txt](../evidence/mutation/M4-wrap-removed.txt)
 
 ### Mutation M5: Real-time Name Validation Untrimmed Check
@@ -109,13 +145,52 @@ Five mutations were applied across `public/app.js` and `public/styles.css` to ve
 - **Command**: `npx playwright test -g "errors clear"`
 - **Result**: **FAILED** (as expected)
 - **Failing Test**: `errors clear as the customer fixes them` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
-- **Failing Assertion**:
+- **Failing Output**:
   ```
-  await expect(page.getByTestId('name-error')).toBeVisible()
+  Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+
+  Locator: getByTestId('name-error')
+  Expected: visible
+  Received: <element(s) not found>
+
+    300 |   await page.getByTestId('name-input').fill('   ');
+  > 301 |   await expect(page.getByTestId('name-error')).toBeVisible();
+        |                                                ^
   ```
-  - **Expected**: `#name-error` remains visible after filling whitespace `"   "`
-  - **Received**: Error was prematurely removed because whitespace length was greater than 0, failing the visibility expectation
 - **Evidence File**: [evidence/mutation/M5-name-clear-untrimmed.txt](../evidence/mutation/M5-name-clear-untrimmed.txt)
+
+### Mutation M6: Maximum Quantity Check Relaxed
+- **Change**: In `parseValidQuantity` in `public/app.js`, changed the upper bound check from `num > 99` to `num > 999`:
+  ```javascript
+  if (!Number.isInteger(num) || num < 1 || num > 999) return null; // was num > 99
+  ```
+- **Command**: `npx playwright test -g "invalid quantity"`
+- **Result**: **FAILED** (as expected)
+- **Failing Test**: `invalid quantity reverts to the last valid value` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
+- **Failing Output**:
+  ```
+  Error: expect(locator).toHaveText(expected) failed
+
+  Locator:  getByTestId('order-total')
+  Expected: "$12.50"
+  Received: "$1,250.00"
+  Timeout:  5000ms
+
+  Call log:
+    - Expect "toHaveText" getByTestId('order-total') with timeout 5000ms
+    - waiting for getByTestId('order-total')
+      14 × locator resolved to <span id="order-total" aria-live="polite" class="order-total-value" data-testid="order-total">$1,250.00</span>
+         - unexpected value "$1,250.00"
+
+    158 |   // Mid-typing "100" must not change the cart
+    159 |   await page.getByTestId('qty-notebook').fill('100');
+  > 160 |   await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+        |                                                 ^
+    161 |   await page.getByTestId('qty-notebook').press('Tab');
+    162 |   await expect(page.getByTestId('qty-notebook')).toHaveValue('1');
+    163 |   await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+  ```
+- **Evidence File**: [evidence/mutation/M6-max-quantity-removed.txt](../evidence/mutation/M6-max-quantity-removed.txt)
 
 ### Restored Suite Verification
 Following all mutation checks, `public/app.js` and `public/styles.css` were restored via `git checkout HEAD -- public/app.js public/styles.css`. `git status` confirmed a clean working tree for application files, and the full test suite was executed:
@@ -134,7 +209,7 @@ MT-3 DEF-001 manual reproduction on unfixed code (baseline e4a7e45), viewport 12
   - Reproduced: yes 
   - Attempts: 8
   - What happened: page returned to empty cart, no confirmation; console printed 0
-  - Console note on the "before" run: none
+  - Console note: TESTER TO COMPLETE
   - Evidence: evidence/manual/DEF-001-before.png
   - After fix (same steps): confirmation stayed; console printed 1. Evidence: evidence/manual/DEF-001-after.png
 ```
@@ -147,7 +222,7 @@ MT-3 DEF-001 manual reproduction on unfixed code (baseline e4a7e45), viewport 12
 - **Title**: Confirmation lost on rapid double-click in short viewport due to layout collapse
 - **Severity**: Medium
 - **Status**: Fixed
-- **Provenance**: Discovered during exploratory probe sweep following reviewer inspection of a manual test screenshot showing the "Start new order" button in an active/highlighted focus state after order placement. DEF-001 was NOT detected by the initial 3 required checks; it was found by the exploratory probe after a reviewer noticed a clue in a manual test screenshot.
+- **Provenance**: Risk hypothesised during design review (hiding the checkout view shrinks the page, so a late second click could land on Start new order). A text highlight on Start new order in a manual screenshot was consistent with this but is not proof. Confirmed by exploratory probing at 1280x500, then by the regression tests failing before and passing after the fix. Not detected by the three required checks, which do not model a layout shift.
 - **Environment**: Desktop Chrome / Chromium, short viewport height (1280x500, scrolled to bottom).
 - **Preconditions**:
   - Application loaded on baseline commit `e4a7e45`.
@@ -178,7 +253,7 @@ Consistent with the regression tests: they fail before and pass after a change t
     newOrderBtn.disabled = false;
   }, 600);
   ```
-  Disabling `#new-order` for 600 ms cleanly absorbs trailing clicks without visual flicker or jarring layout changes; the button appears disabled for 600 ms. Playwright's click actions auto-wait for buttons to become enabled, so standard automated tests require no artificial sleeps.
+  Disabling #new-order absorbs a late trailing click; the button appears disabled for 600 ms. Playwright's click actions auto-wait for enabled buttons, so the tests need no sleeps.
 
 ### Verification Evidence
 - [evidence/DEF-001/before-tests.txt](../evidence/DEF-001/before-tests.txt) (Failing output on unfixed baseline `e4a7e45`)
@@ -196,6 +271,4 @@ Assumed, not measured, that a customer takes longer than 600 ms to read the conf
 ---
 
 ## 6. Overall Assessment
-No other defects were found during automated suite runs (15/15 tests passing, 75/75 stability runs, 15/15 isolation checks), exploratory probe execution (152/152 attempts passing across 22 distinct layout scenarios), or manual test executions.
-
-Regarding the tester note `"Console note on the 'before' run: none"` in the manual results: the tester confirmed that no unhandled JavaScript error or rejected promise occurred when the defect hit; the application simply executed valid code (`handleNewOrder`) in response to a real click event that landed on the shifted button.
+No other defects were found by the activities above. One console message ('1 error') is visible in evidence/manual/DEF-001-before.png and is documented in the manual results.

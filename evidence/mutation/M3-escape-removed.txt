@@ -1,4 +1,22 @@
-
 Running 1 test using 1 worker
+  x  1 [chromium] › tests\checkout.spec.js:259:1 › customer name is shown as text and never rendered as HTML (7.5s)
 
-  x  1 [chromium] › tests\checkout.spec.js:260:1 › customer name is shown as text and never rendered as HTML (7.5s)
+Error: expect(locator).toHaveText(expected) failed
+
+Locator:  getByTestId('confirmation-name')
+Expected: "<img src=x onerror=\"window.__xss=1\">Asha"
+Received: "Asha"
+Timeout:  5000ms
+
+Call log:
+  - Expect "toHaveText" getByTestId('confirmation-name') with timeout 5000ms
+  - waiting for getByTestId('confirmation-name')
+    14 × locator resolved to <span id="confirmation-name" data-testid="confirmation-name">...</span>
+       - unexpected value "Asha"
+
+  263 |   await page.getByTestId('place-order').click();
+  264 | 
+> 265 |   await expect(page.getByTestId('confirmation-name')).toHaveText('<img src=x onerror="window.__xss=1">Asha');
+      |                                                       ^
+  266 |   await expect(page.locator('[data-testid="confirmation"] img')).toHaveCount(0);
+  267 |   await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined();

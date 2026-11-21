@@ -233,7 +233,6 @@ test('rapid double-click on Place Order in a short window keeps the confirmation
   await expect(page.getByTestId('order-total')).not.toBeVisible();
 });
 
-
 test('rapid triple-click on Place Order in a short window keeps the confirmation', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 500 });
   await page.getByTestId('add-notebook').click();
