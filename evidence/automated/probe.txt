@@ -169,4 +169,4 @@ MULTIPLE         : 0
 OTHER            : 0
 TOTAL ATTEMPTS   : 152
 DISTINCT SCENARIOS TESTED: 22
-  ok 1 [chromium] › exploratory\double-click-probe.spec.js:6:3 › Double-click layout-shift probe › sweep viewports, target Y coordinates, and click modes (22.8s)
+  ok 1 [chromium] › exploratory\double-click-probe.spec.js:6:3 › Double-click layout-shift probe › sweep viewports, target Y coordinates, and click modes (22.5s)

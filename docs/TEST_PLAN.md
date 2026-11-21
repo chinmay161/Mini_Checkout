@@ -5,15 +5,18 @@
 ### 1.1 In Scope
 - **Client-Side Functional Checkout**: Cart management, dynamic line item additions, quantity modification (1–99), removal of line items, dynamic total recalculations.
 - **Form Validation & Accessibility**: Client-side name trimming, required field enforcement, empty cart prevention, ARIA live alerts (`role="alert"`), `aria-invalid`, `aria-describedby`, and programmatic focus placement.
-- **Order Placement & Idempotency**: Synchronous double-submit guards, unique reference format validation (`ORD-[A-Z0-9]{8}`), customer and item summary rendering.
+- **Order Placement & Idempotency**: Synchronous double-submit guards, unique reference format validation (`ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}`), customer and item summary rendering.
 - **State Reset**: "Start new order" clearing cart state, input fields, and returning to a clean UI state.
-- **Edge Conditions & Layout Resiliency**: Rapid multi-clicks, short-window layout shifts, mid-typing quantity behavior, and blur reversions.
+- **Edge Conditions & Layout Resiliency**: Rapid multi-clicks, short-window layout shifts, mid-typing quantity behavior, blur reversions, XSS injection prevention, unbroken string wrapping, and keyboard Enter form submissions.
 
 ### 1.2 Out of Scope
 - Backend databases, order persistence APIs, or external network requests.
 - Payment processing gateways, credit card validation, or shipping calculation services.
 - Cross-browser automation beyond Chromium (Firefox, WebKit).
 - User authentication, session storage, cookies, or local storage.
+
+### 1.3 Known Limitations of the Tests
+The short-window tests 10 and 11 depend on the page layout at 1280x500 and on the 600 ms disabled window; a large layout change could make them pass for the wrong reason, so they should be re-checked (re-run the baseline red check) after any layout change.
 
 ---
 
@@ -32,12 +35,15 @@
 | **Low** | Focus and ARIA announcement failures | Keyboard and screen-reader users lose context if error alerts or confirmation headings are not focused. |
 | **Low** | HTML injection through the name field | Unsanitized input rendered in order confirmation could execute arbitrary scripts (XSS). |
 | **Low** | Long unbroken name text overflow | Extremely long unbroken strings (e.g., 100+ character words) can break container boundaries on narrow screens. |
+| **Low** | Enter key submission failure | Keyboard users expect submitting via Enter from input fields to place the order once. |
+| **Low** | Error alerts not clearing dynamically | Lingering validation errors confuse customers once inputs have been corrected. |
+| **Low** | Multi-item summary inaccuracies | Confirmation card itemized list must accurately reflect all line items, quantities, and composite total. |
 
 ---
 
 ## 3. Coverage Matrix
 
-| Risk | Automated Test(s) | Manual Test(s) | Status |
+| Risk / Requirement | Automated Test(s) | Manual Test(s) | Status |
 | :--- | :--- | :--- | :--- |
 | **Wrong totals** | `changing quantities updates line totals and the exact order total` | — | Covered |
 | **Empty cart order** | `empty cart blocks checkout`<br>`empty cart and blank name show both messages and focus the first problem` | `MT-1` | Covered |
@@ -48,17 +54,20 @@
 | **Invalid quantity input** | `invalid quantity reverts to the last valid value` | — | Covered |
 | **Stale state on reset** | `remove and start-new-order reset` | — | Covered |
 | **Focus and ARIA handling** | `successful checkout shows a single order confirmation with a reference`<br>`missing name blocks checkout and keeps the cart`<br>`empty cart and blank name show both messages and focus the first problem` | — | Covered |
-| **HTML injection in name** | **NOT COVERED** by automated test (Covered via manual code inspection: `escapeHtml()` in `public/app.js`) | — | Code Inspection Only |
-| **Long unbroken name overflow** | **NOT COVERED** by automated test (Covered via CSS inspection: `overflow-wrap: anywhere;` in `public/styles.css`) | — | CSS Inspection Only |
+| **HTML injection in name** | `customer name is shown as text and never rendered as HTML` | — | Covered (+ Mutation M3) |
+| **Long unbroken name overflow** | `a very long unbroken name stays inside the confirmation card` | — | Covered (+ Mutation M4) |
+| **Enter key submit** | `pressing Enter in the name field places the order once` | — | Covered |
+| **Error messages clear as customer fixes input** | `errors clear as the customer fixes them` | — | Covered (+ Mutation M5) |
+| **Confirmation lists ordered items and total for a multi-item order** | `pressing Enter in the name field places the order once` | — | Covered |
 
 ---
 
 ## 4. Automated Test Specifications
 
-All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js).
+All automated tests are located in [`tests/checkout.spec.js`](../tests/checkout.spec.js).
 
 ### Test TC-01: Successful Checkout Shows Single Order Confirmation with Reference
-- **Title**: `successful checkout shows a single order confirmation with a reference` (Lines 13–34)
+- **Title**: `successful checkout shows a single order confirmation with a reference`
 - **Steps**:
   1. Click "Add to cart" on Canvas Notebook.
   2. Fill `#name-input` with `'  Asha Rao  '`.
@@ -81,7 +90,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-02: Missing Name Blocks Checkout and Keeps the Cart
-- **Title**: `missing name blocks checkout and keeps the cart` (Lines 36–58)
+- **Title**: `missing name blocks checkout and keeps the cart`
 - **Steps**:
   1. Click "Add to cart" on Gel Pen Set.
   2. Fill `#name-input` with whitespace `'   '`.
@@ -105,7 +114,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-03: Changing Quantities Updates Line Totals and Order Total
-- **Title**: `changing quantities updates line totals and the exact order total` (Lines 60–81)
+- **Title**: `changing quantities updates line totals and the exact order total`
 - **Steps**:
   1. Add Notebook ($12.50) and Pens ($4.99).
   2. Type `'3'` in Notebook quantity input.
@@ -125,7 +134,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-04: Empty Cart Blocks Checkout
-- **Title**: `empty cart blocks checkout` (Lines 83–93)
+- **Title**: `empty cart blocks checkout`
 - **Steps**:
   1. Fill name `'Asha Rao'` with an empty cart.
   2. Click "Place Order".
@@ -142,7 +151,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-05: Double Submit Produces Exactly One Confirmation
-- **Title**: `double submit produces exactly one confirmation` (Lines 95–109)
+- **Title**: `double submit produces exactly one confirmation`
 - **Steps**:
   1. Add Canvas Notebook, fill name `'Asha Rao'`.
   2. Rapidly double-click "Place Order" via `.dblclick()`.
@@ -158,7 +167,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-06: Scripted Rapid Submits Still Produce One Confirmation
-- **Title**: `scripted rapid submits still produce one confirmation` (Lines 111–143)
+- **Title**: `scripted rapid submits still produce one confirmation`
 - **Steps**:
   1. Add Canvas Notebook, fill name `'Asha Rao'`.
   2. In a single synchronous `page.evaluate()`, click `#place-order`, read first order reference, click `#place-order` again, call `form.requestSubmit()` twice, and read subsequent reference and confirmation count.
@@ -176,7 +185,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-07: Invalid Quantity Reverts to the Last Valid Value
-- **Title**: `invalid quantity reverts to the last valid value` (Lines 145–165)
+- **Title**: `invalid quantity reverts to the last valid value`
 - **Steps**:
   1. Add Canvas Notebook (qty 1, total $12.50).
   2. Fill qty input with `'0'`; assert total is still `'$12.50'`. Blur via `Tab`.
@@ -195,7 +204,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-08: Remove and Start-New-Order Reset
-- **Title**: `remove and start-new-order reset` (Lines 167–199)
+- **Title**: `remove and start-new-order reset`
 - **Steps**:
   1. Add Notebook, click "Remove".
   2. Add Notebook, fill name `'Asha Rao'`, place order.
@@ -216,7 +225,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-09: Empty Cart and Blank Name Show Both Messages and Focus First Problem
-- **Title**: `empty cart and blank name show both messages and focus the first problem` (Lines 201–213)
+- **Title**: `empty cart and blank name show both messages and focus the first problem`
 - **Steps**:
   1. On a fresh page, click "Place Order" without adding items or entering a name.
 - **Expected Results**:
@@ -232,7 +241,7 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```
 
 ### Test TC-10: Rapid Double-Click on Place Order in a Short Window Keeps Confirmation
-- **Title**: `rapid double-click on Place Order in a short window keeps the confirmation` (Lines 215–234)
+- **Title**: `rapid double-click on Place Order in a short window keeps the confirmation`
 - **Steps**:
   1. Set viewport to 1280x500.
   2. Add Canvas Notebook, fill name `'Asha Rao'`.
@@ -245,12 +254,13 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   ```javascript
   await page.mouse.dblclick(x, y);
   await expect(page.getByTestId('confirmation')).toHaveCount(1);
+  await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
   await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
   await expect(page.getByTestId('order-total')).not.toBeVisible();
   ```
 
 ### Test TC-11: Rapid Triple-Click on Place Order in a Short Window Keeps Confirmation
-- **Title**: `rapid triple-click on Place Order in a short window keeps the confirmation` (Lines 236–257)
+- **Title**: `rapid triple-click on Place Order in a short window keeps the confirmation`
 - **Steps**:
   1. Set viewport to 1280x500, add Notebook, fill name `'Asha Rao'`.
   2. Scroll to bottom, calculate center of `#place-order`.
@@ -263,6 +273,86 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   await page.mouse.click(x, y);
   await page.mouse.click(x, y);
   await page.mouse.click(x, y);
+  await expect(page.getByTestId('confirmation')).toHaveCount(1);
+  await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+  ```
+
+### Test TC-12: Customer Name is Shown as Text and Never Rendered as HTML
+- **Title**: `customer name is shown as text and never rendered as HTML`
+- **Steps**:
+  1. Load page, add Canvas Notebook.
+  2. Fill name with `'  <img src=x onerror="window.__xss=1">Asha   '`.
+  3. Click "Place Order".
+- **Expected Results**:
+  - Customer name renders exactly as text `<img src=x onerror="window.__xss=1">Asha`.
+  - Zero `img` elements exist inside the confirmation card.
+  - `window.__xss` evaluates to `undefined` (script never executed).
+- **Key Assertions**:
+  ```javascript
+  await expect(page.getByTestId('confirmation-name')).toHaveText('<img src=x onerror="window.__xss=1">Asha');
+  await expect(page.locator('[data-testid="confirmation"] img')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined();
+  ```
+
+### Test TC-13: A Very Long Unbroken Name Stays Inside the Confirmation Card
+- **Title**: `a very long unbroken name stays inside the confirmation card`
+- **Steps**:
+  1. Set viewport to 390x844 (mobile portrait).
+  2. Add Canvas Notebook.
+  3. Fill name with `'A'.repeat(200)`.
+  4. Click "Place Order".
+  5. Measure bounding boxes of `#confirmation-name` and `#confirmation`.
+- **Expected Results**:
+  - The name breaks and wraps within the card container boundaries.
+  - `nameBox.x + nameBox.width <= cardBox.x + cardBox.width + 1`.
+- **Key Assertions**:
+  ```javascript
+  const nameBox = await page.getByTestId('confirmation-name').boundingBox();
+  const cardBox = await page.getByTestId('confirmation').boundingBox();
+  expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1);
+  ```
+
+### Test TC-14: Pressing Enter in the Name Field Places the Order Once
+- **Title**: `pressing Enter in the name field places the order once`
+- **Steps**:
+  1. Add Canvas Notebook and Gel Pen Set.
+  2. Set Notebook quantity to 2.
+  3. Fill name input with `'Asha Rao'`.
+  4. Press `Enter` inside the name input field.
+- **Expected Results**:
+  - Exactly 1 confirmation rendered.
+  - Item list contains `'Canvas Notebook × 2'` and `'Gel Pen Set × 1'`.
+  - Confirmation total displays `'$29.99'` (2 × 12.50 + 4.99).
+  - Order reference matches `ORD-` regex pattern.
+- **Key Assertions**:
+  ```javascript
+  await page.getByTestId('name-input').press('Enter');
+  await expect(page.getByTestId('confirmation')).toHaveCount(1);
+  await expect(page.getByTestId('confirmation')).toContainText('Canvas Notebook × 2');
+  await expect(page.getByTestId('confirmation')).toContainText('Gel Pen Set × 1');
+  await expect(page.getByTestId('confirmation-total')).toHaveText('$29.99');
+  await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+  ```
+
+### Test TC-15: Errors Clear as the Customer Fixes Them
+- **Title**: `errors clear as the customer fixes them`
+- **Steps**:
+  1. On a fresh page, click "Place Order" to trigger `#cart-error` and `#name-error`.
+  2. Fill name with `'   '` (whitespace only); assert `#name-error` remains visible.
+  3. Fill name with `'Asha Rao'`; assert `#name-error` disappears and `aria-invalid` is removed, but `#cart-error` remains visible.
+  4. Click "Add to cart" on Notebook; assert `#cart-error` disappears.
+  5. Click "Place Order"; assert order confirmation appears.
+- **Key Assertions**:
+  ```javascript
+  await page.getByTestId('name-input').fill('   ');
+  await expect(page.getByTestId('name-error')).toBeVisible();
+  await page.getByTestId('name-input').fill('Asha Rao');
+  await expect(page.getByTestId('name-error')).toHaveCount(0);
+  await expect(page.getByTestId('name-input')).not.toHaveAttribute('aria-invalid');
+  await expect(page.getByTestId('cart-error')).toBeVisible();
+  await page.getByTestId('add-notebook').click();
+  await expect(page.getByTestId('cart-error')).toHaveCount(0);
+  await page.getByTestId('place-order').click();
   await expect(page.getByTestId('confirmation')).toHaveCount(1);
   ```
 
@@ -305,6 +395,12 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
   - The "Start new order" button is disabled for 600 ms, absorbing the second click.
   - Confirmation card remains displayed (`document.querySelectorAll('[data-testid="confirmation"]').length === 1`).
 
+### 5.4 Known Limitations of the Tests
+- **Keyboard Event Simulation**: Playwright's `locator.fill()` directly updates the input value and dispatches `input` and `change` DOM events, but it does not emit the full sequence of individual physical keyboard events (`keydown`, `keypress`, `keyup`) that an end-user typing keystroke-by-keystroke generates.
+- **Assumed Reaction Time Threshold**: The 600 ms disabled delay on the "Start new order" button is an assumed threshold designed to exceed trailing multi-click intervals while remaining imperceptible to normal human task switching; it is assumed rather than experimentally measured against empirical human reaction times.
+- **Storage Absence Verification**: Clean state behavior upon page refresh is verified by reloading the single-page application in tests, but the strict absence of `localStorage`, `sessionStorage`, and cookies is confirmed via architectural constraints and code inspection rather than an automated browser storage crawler/probe.
+- **Layout Sensitivity for DEF-001**: Regression tests TC-10 and TC-11 depend on the specific element geometry and layout at viewport 1280x500. Significant visual redesigns could alter hit-target alignment and should be validated against the baseline red check.
+
 ---
 
 ## 6. Entry and Exit Criteria & Defect Reporting
@@ -315,9 +411,9 @@ All automated tests are located in [tests/checkout.spec.js](file:///c:/Users/Chi
 - Playwright Chromium test runner is installed and initialized.
 
 ### 6.2 Exit Criteria
-- 100% of the 11 automated test cases pass in `npm test`.
-- Stress test `npx playwright test --repeat-each=5` completes with 55/55 passes (0 flakes).
-- Single-worker isolation test `npx playwright test --workers=1` completes with 11/11 passes.
+- 100% of the 15 automated test cases pass in `npm test`.
+- Stress test `npx playwright test --repeat-each=5` completes with 75/75 passes (0 flakes).
+- Single-worker isolation test `npx playwright test --workers=1` completes with 15/15 passes.
 - Exploratory probe `npm run probe` completes with `CONFIRMATION_LOST: 0`.
 - Manual verification scenarios MT-1, MT-2a, MT-2b, and MT-3 pass.
 
@@ -328,4 +424,4 @@ When a defect is identified:
 3. Capture visual artifacts (failure screenshot, Playwright trace).
 4. Author a failing automated regression test first to prove defect presence (Red).
 5. Apply isolated fix in application code and verify regression test passes (Green).
-6. Document root-cause analysis and residual risk in [docs/TEST_RESULTS.md](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/docs/TEST_RESULTS.md).
+6. Document root-cause analysis and residual risk in [TEST_RESULTS.md](TEST_RESULTS.md).

@@ -233,6 +233,7 @@ test('rapid double-click on Place Order in a short window keeps the confirmation
   await expect(page.getByTestId('order-total')).not.toBeVisible();
 });
 
+
 test('rapid triple-click on Place Order in a short window keeps the confirmation', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 500 });
   await page.getByTestId('add-notebook').click();
@@ -255,3 +256,59 @@ test('rapid triple-click on Place Order in a short window keeps the confirmation
   await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
   await expect(page.getByTestId('order-total')).not.toBeVisible();
 });
+
+test('customer name is shown as text and never rendered as HTML', async ({ page }) => {
+  await page.getByTestId('add-notebook').click();
+  await page.getByTestId('name-input').fill('  <img src=x onerror="window.__xss=1">Asha   ');
+  await page.getByTestId('place-order').click();
+
+  await expect(page.getByTestId('confirmation-name')).toHaveText('<img src=x onerror="window.__xss=1">Asha');
+  await expect(page.locator('[data-testid="confirmation"] img')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined();
+});
+
+test('a very long unbroken name stays inside the confirmation card', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByTestId('add-notebook').click();
+  await page.getByTestId('name-input').fill('A'.repeat(200));
+  await page.getByTestId('place-order').click();
+
+  const nameBox = await page.getByTestId('confirmation-name').boundingBox();
+  const cardBox = await page.getByTestId('confirmation').boundingBox();
+  expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1);
+});
+
+test('pressing Enter in the name field places the order once', async ({ page }) => {
+  await page.getByTestId('add-notebook').click();
+  await page.getByTestId('add-pens').click();
+  await page.getByTestId('qty-notebook').fill('2');
+  await page.getByTestId('name-input').fill('Asha Rao');
+  await page.getByTestId('name-input').press('Enter');
+
+  await expect(page.getByTestId('confirmation')).toHaveCount(1);
+  await expect(page.getByTestId('confirmation')).toContainText('Canvas Notebook × 2');
+  await expect(page.getByTestId('confirmation')).toContainText('Gel Pen Set × 1');
+  await expect(page.getByTestId('confirmation-total')).toHaveText('$29.99');
+  await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+});
+
+test('errors clear as the customer fixes them', async ({ page }) => {
+  await page.getByTestId('place-order').click();
+  await expect(page.getByTestId('cart-error')).toBeVisible();
+  await expect(page.getByTestId('name-error')).toBeVisible();
+
+  await page.getByTestId('name-input').fill('   ');
+  await expect(page.getByTestId('name-error')).toBeVisible();
+
+  await page.getByTestId('name-input').fill('Asha Rao');
+  await expect(page.getByTestId('name-error')).toHaveCount(0);
+  await expect(page.getByTestId('name-input')).not.toHaveAttribute('aria-invalid');
+  await expect(page.getByTestId('cart-error')).toBeVisible();
+
+  await page.getByTestId('add-notebook').click();
+  await expect(page.getByTestId('cart-error')).toHaveCount(0);
+
+  await page.getByTestId('place-order').click();
+  await expect(page.getByTestId('confirmation')).toHaveCount(1);
+});
+

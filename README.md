@@ -18,14 +18,22 @@ Mini Checkout is a lightweight, single-page checkout application designed for a 
    ```bash
    npm start
    ```
-3. Open your browser to [http://localhost:3000](http://localhost:3000). To override the default port, provide the `PORT` environment variable (e.g. `PORT=3050 node server.js`).
+3. Open your browser to [http://localhost:3000](http://localhost:3000). To override the default port, provide the `PORT` environment variable:
+   - **Windows PowerShell**:
+     ```powershell
+     $env:PORT=3001; npm start
+     ```
+   - **macOS / Linux**:
+     ```bash
+     PORT=3001 npm start
+     ```
 
 ## Run the Browser Tests
 1. Install browser binaries (if not already installed):
    ```bash
    npx playwright install chromium
    ```
-2. Run the automated test suite:
+2. Run the automated test suite (15 tests):
    ```bash
    npm test
    ```
@@ -57,7 +65,7 @@ mini-checkout/
 │   ├── styles.css                        # CSS layout, focus outlines, and responsive styles
 │   └── app.js                           # State, integer cents math, validation, and confirmation
 ├── tests/
-│   └── checkout.spec.js                  # 11 automated Playwright Chromium end-to-end tests
+│   └── checkout.spec.js                  # 15 automated Playwright Chromium end-to-end tests
 ├── exploratory/
 │   ├── double-click-probe.spec.js        # Viewport and layout-shift exploratory probe
 │   └── evidence/                         # Baseline probe failure screenshots
@@ -73,31 +81,33 @@ mini-checkout/
     └── TEST_RESULTS.md                   # Automated, manual, mutation, and defect write-ups
 ```
 
-## Mapping of Required Checks and Tests
+## Automated Test Suite
 
-The challenge requires three fundamental user-facing guarantees:
+The test suite prominently implements the three required challenge checks in exact order:
 
-1. **Check 1: Customers must see the correct total**
-   - [`changing quantities updates line totals and the exact order total`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L60-L81) (Lines 60–81)
+1. **successful checkout with items and total calculation**:
+   - [`successful checkout shows a single order confirmation with a reference`](tests/checkout.spec.js)
+2. **missing name displays validation error and keeps cart intact**:
+   - [`missing name blocks checkout and keeps the cart`](tests/checkout.spec.js)
+3. **rapid double-click on Place Order results in exactly one confirmation**:
+   - [`double submit produces exactly one confirmation`](tests/checkout.spec.js)
 
-2. **Check 2: Customers must know which fields are missing**
-   - [`missing name blocks checkout and keeps the cart`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L36-L58) (Lines 36–58)
-   - [`empty cart blocks checkout`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L83-L93) (Lines 83–93)
-
-3. **Check 3: Customers must get exactly ONE clear order confirmation**
-   - [`successful checkout shows a single order confirmation with a reference`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L13-L34) (Lines 13–34)
-   - [`double submit produces exactly one confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L95-L109) (Lines 95–109)
-   - [`scripted rapid submits still produce one confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L111-L143) (Lines 111–143)
-
-### Additional Automated Coverage & Bonus Tests
-- [`invalid quantity reverts to the last valid value`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L145-L165) (Lines 145–165)
-- [`remove and start-new-order reset`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L167-L199) (Lines 167–199)
-- [`empty cart and blank name show both messages and focus the first problem`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L201-L213) (Lines 201–213)
-- [`rapid double-click on Place Order in a short window keeps the confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L215-L234) (Lines 215–234)
-- [`rapid triple-click on Place Order in a short window keeps the confirmation`](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L236-L257) (Lines 236–257)
+12 additional tests cover the rest of the matrix, including edge cases, regression handling, layout shifts, security, and responsive styling:
+- [`changing quantities updates line totals and the exact order total`](tests/checkout.spec.js)
+- [`empty cart blocks checkout`](tests/checkout.spec.js)
+- [`scripted rapid submits still produce one confirmation`](tests/checkout.spec.js)
+- [`invalid quantity reverts to the last valid value`](tests/checkout.spec.js)
+- [`remove and start-new-order reset`](tests/checkout.spec.js)
+- [`empty cart and blank name show both messages and focus the first problem`](tests/checkout.spec.js)
+- [`rapid double-click on Place Order in a short window keeps the confirmation`](tests/checkout.spec.js)
+- [`rapid triple-click on Place Order in a short window keeps the confirmation`](tests/checkout.spec.js)
+- [`customer name is shown as text and never rendered as HTML`](tests/checkout.spec.js)
+- [`a very long unbroken name stays inside the confirmation card`](tests/checkout.spec.js)
+- [`pressing Enter in the name field places the order once`](tests/checkout.spec.js)
+- [`errors clear as the customer fixes them`](tests/checkout.spec.js)
 
 ## Manual Tests
-For human-driven testing scenarios (empty cart error appearance, desktop double-click, and phone viewport gestures), detailed instructions and results are documented in [docs/TEST_PLAN.md](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/docs/TEST_PLAN.md#manual-test-cases) and [docs/TEST_RESULTS.md](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/docs/TEST_RESULTS.md#4-tester-supplied-manual-results).
+For human-driven testing scenarios (empty cart error appearance, desktop double-click, and phone viewport gestures), detailed instructions and results are documented in [docs/TEST_PLAN.md](docs/TEST_PLAN.md#5-manual-test-cases) and [docs/TEST_RESULTS.md](docs/TEST_RESULTS.md#4-manual-test-results).
 
 ## Exploratory Probe
 To investigate layout shift and click-through anomalies under extreme conditions, an exploratory test probe is provided:
@@ -110,7 +120,7 @@ The probe sweeps 8 distinct viewport resolutions across 10 target vertical coord
 - **Integer Cents Precision**: All financial calculations are stored and evaluated in whole integer cents (e.g. Notebook = 1250 cents, Pens = 499 cents). Dollar formatting occurs strictly at the display boundary via `Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })`, avoiding floating-point rounding errors.
 - **Persistent Place Order Button**: The "Place Order" button remains enabled when the cart or name is invalid, ensuring users receive immediate actionable validation feedback and accessibility alerts upon clicking.
 - **Synchronous Double-Submit Guard**: `orderPlaced` and `isSubmitting` guard flags are evaluated and updated synchronously at the very top of the submit handler, discarding secondary submission events before asynchronous tasks occur.
-- **Stateless Clean State**: No `localStorage`, `sessionStorage`, or cookies are utilized. Refreshing the browser guaranteed a pristine, initial state.
+- **Stateless Clean State**: No `localStorage`, `sessionStorage`, or cookies are utilized. Refreshing the browser guarantees a pristine, initial state.
 
 ## Known Limitations
 - **Chromium Only**: Test automation targets Playwright Chromium exclusively, as specified in the project scope. Cross-browser testing across Firefox or WebKit has not been executed.

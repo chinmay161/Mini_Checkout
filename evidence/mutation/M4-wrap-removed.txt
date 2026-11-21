@@ -1,0 +1,4 @@
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › tests\checkout.spec.js:270:1 › a very long unbroken name stays inside the confirmation card (2.0s)

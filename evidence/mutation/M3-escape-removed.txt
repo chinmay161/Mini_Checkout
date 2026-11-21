@@ -1,0 +1,4 @@
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › tests\checkout.spec.js:260:1 › customer name is shown as text and never rendered as HTML (7.5s)

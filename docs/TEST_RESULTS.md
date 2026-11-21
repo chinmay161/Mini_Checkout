@@ -19,9 +19,9 @@ The automated test suite was executed across multiple worker configurations and 
 
 | Test Run Type | Command | Total Tests | Passed | Failed | Flakes | Duration | Evidence File |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Full Test Suite** | `npm test` | 11 | 11 | 0 | 0 | 4.2s | [evidence/automated/npm-test.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/automated/npm-test.txt) |
-| **Stability Run** | `npx playwright test --repeat-each=5` | 55 | 55 | 0 | 0 | 10.4s | [evidence/automated/repeat-each-5.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/automated/repeat-each-5.txt) |
-| **Isolation Run** | `npx playwright test --workers=1` | 11 | 11 | 0 | 0 | 7.0s | [evidence/automated/workers-1.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/automated/workers-1.txt) |
+| **Full Test Suite** | `npm test` | 15 | 15 | 0 | 0 | 3.4s | [evidence/automated/npm-test.txt](../evidence/automated/npm-test.txt) |
+| **Stability Run** | `npx playwright test --repeat-each=5` | 75 | 75 | 0 | 0 | 10.4s | [evidence/automated/repeat-each-5.txt](../evidence/automated/repeat-each-5.txt) |
+| **Isolation Run** | `npx playwright test --workers=1` | 15 | 15 | 0 | 0 | 7.0s | [evidence/automated/workers-1.txt](../evidence/automated/workers-1.txt) |
 
 ### 2.1 Exploratory Probe Results
 The exploratory layout probe executes a matrix of viewports, vertical click coordinates, and click modes using real mouse input (`page.mouse`):
@@ -33,8 +33,8 @@ The exploratory layout probe executes a matrix of viewports, vertical click coor
   - `OTHER`: 0
   - `TOTAL ATTEMPTS`: 152
   - `DISTINCT SCENARIOS TESTED`: 22
-- **Duration**: 22.8s
-- **Evidence File**: [evidence/automated/probe.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/automated/probe.txt)
+- **Duration**: 22.5s
+- **Evidence File**: [evidence/automated/probe.txt](../evidence/automated/probe.txt)
 
 > **Plain-language note on probe coverage**: The 152 probe rows overstate independent coverage because requested Y coordinates frequently clamp to the page scroll boundary (`document.body.scrollHeight`). On short pages or small viewports, multiple requested Y values target the exact same bottom position (actual coordinates). The probe is a diagnostic measurement tool rather than a release gate, and these numbers accurately reflect the live hit-testing behavior of the layout after the DEF-001 fix.
 
@@ -42,7 +42,7 @@ The exploratory layout probe executes a matrix of viewports, vertical click coor
 
 ## 3. Mutation Checks
 
-Two mutations were applied to `public/app.js` to ensure the test suite catches critical regressions.
+Five mutations were applied across `public/app.js` and `public/styles.css` to verify that the test suite detects critical regressions.
 
 ### Mutation M1: Submit Guard Removal
 - **Change**: Commented out the early double-submit guard in `public/app.js`:
@@ -53,14 +53,14 @@ Two mutations were applied to `public/app.js` to ensure the test suite catches c
   ```
 - **Command**: `npx playwright test -g "scripted rapid submits"`
 - **Result**: **FAILED** (as expected)
-- **Failing Test**: `scripted rapid submits still produce one confirmation` at [tests/checkout.spec.js:111:1](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L111)
+- **Failing Test**: `scripted rapid submits still produce one confirmation` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
 - **Failing Assertion**:
   ```
   expect(result.after).toBe(result.first)
   ```
   - **Expected**: First generated order reference (e.g. `"ORD-..."`)
   - **Received**: A newly regenerated order reference from the second submission attempt
-- **Evidence File**: [evidence/mutation/M1-guard-removed.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/mutation/M1-guard-removed.txt)
+- **Evidence File**: [evidence/mutation/M1-guard-removed.txt](../evidence/mutation/M1-guard-removed.txt)
 
 ### Mutation M2: Name Trimming Removal
 - **Change**: Changed whitespace validation from trimmed length to raw length in `public/app.js`:
@@ -69,23 +69,62 @@ Two mutations were applied to `public/app.js` to ensure the test suite catches c
   ```
 - **Command**: `npx playwright test -g "missing name"`
 - **Result**: **FAILED** (as expected)
-- **Failing Test**: `missing name blocks checkout and keeps the cart` at [tests/checkout.spec.js:36:1](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/tests/checkout.spec.js#L36)
+- **Failing Test**: `missing name blocks checkout and keeps the cart` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
 - **Failing Assertion**:
   ```
   await expect(page.getByTestId('name-error')).toBeVisible()
   ```
   - **Expected**: Visible `#name-error` element
   - **Received**: Element not visible (timed out after 5000ms because raw string `"   "` with length 3 was erroneously accepted as valid, placing the order instead of blocking)
-- **Evidence File**: [evidence/mutation/M2-trim-removed.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/mutation/M2-trim-removed.txt)
+- **Evidence File**: [evidence/mutation/M2-trim-removed.txt](../evidence/mutation/M2-trim-removed.txt)
+
+### Mutation M3: HTML Escaping Removal
+- **Change**: Temporarily made `escapeHtml(str)` in `public/app.js` return `str` unchanged without escaping HTML characters (`&`, `<`, `>`, `"`, `'`).
+- **Command**: `npx playwright test -g "shown as text"`
+- **Result**: **FAILED** (as expected)
+- **Failing Test**: `customer name is shown as text and never rendered as HTML` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
+- **Failing Assertion**:
+  ```
+  await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined()
+  ```
+  - **Expected**: `undefined` (no injected script execution)
+  - **Received**: `1` (the unescaped payload `<img src=x onerror="window.__xss=1">Asha` executed its onerror handler)
+- **Evidence File**: [evidence/mutation/M3-escape-removed.txt](../evidence/mutation/M3-escape-removed.txt)
+
+### Mutation M4: Unbroken Name Wrap Removal
+- **Change**: Temporarily removed `overflow-wrap: anywhere;` from `.confirmation-card` in `public/styles.css`.
+- **Command**: `npx playwright test -g "long unbroken name"`
+- **Result**: **FAILED** (as expected)
+- **Failing Test**: `a very long unbroken name stays inside the confirmation card` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
+- **Failing Assertion**:
+  ```
+  expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1)
+  ```
+  - **Expected**: `nameBox.x + nameBox.width` <= `cardBox.x + cardBox.width + 1` (within card boundaries)
+  - **Received**: `nameBox.width` overflowed horizontal boundaries of the card container on mobile viewport (390px)
+- **Evidence File**: [evidence/mutation/M4-wrap-removed.txt](../evidence/mutation/M4-wrap-removed.txt)
+
+### Mutation M5: Real-time Name Validation Untrimmed Check
+- **Change**: In the `#name-input` input event listener in `public/app.js`, changed `nameInput.value.trim().length > 0` to `nameInput.value.length > 0`.
+- **Command**: `npx playwright test -g "errors clear"`
+- **Result**: **FAILED** (as expected)
+- **Failing Test**: `errors clear as the customer fixes them` in [`tests/checkout.spec.js`](../tests/checkout.spec.js)
+- **Failing Assertion**:
+  ```
+  await expect(page.getByTestId('name-error')).toBeVisible()
+  ```
+  - **Expected**: `#name-error` remains visible after filling whitespace `"   "`
+  - **Received**: Error was prematurely removed because whitespace length was greater than 0, failing the visibility expectation
+- **Evidence File**: [evidence/mutation/M5-name-clear-untrimmed.txt](../evidence/mutation/M5-name-clear-untrimmed.txt)
 
 ### Restored Suite Verification
-Following mutation tests, `public/app.js` was restored via `git checkout HEAD -- public/app.js`. `git status` confirmed a clean working tree for application files, and the full test suite was executed:
-- **Result**: All 11 tests passed in 3.4s (6 workers).
-- **Evidence File**: [evidence/mutation/restored-suite.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/mutation/restored-suite.txt)
+Following all mutation checks, `public/app.js` and `public/styles.css` were restored via `git checkout HEAD -- public/app.js public/styles.css`. `git status` confirmed a clean working tree for application files, and the full test suite was executed:
+- **Result**: All 15 tests passed cleanly.
+- **Evidence File**: [evidence/mutation/restored-suite.txt](../evidence/mutation/restored-suite.txt)
 
 ---
 
-## 4. TESTER-SUPPLIED MANUAL RESULTS (Transcribed Verbatim)
+## 4. Manual test results
 
 ```
 MT-1 Empty cart (desktop Chrome 157.0.8103.80, 21-11-2026 ~20:33): typed name "Chinmay Wankhede", cart empty, clicked Place Order. Observed: the cart error "Your cart is empty. Add at least one item before placing your order." was shown with a highlighted border, no confirmation, name preserved, order total $0.00. Evidence: evidence/manual/manual-A-empty-cart.png
@@ -94,9 +133,10 @@ MT-2b Rapid double-click, phone-sized viewport (DevTools device mode): added Gel
 MT-3 DEF-001 manual reproduction on unfixed code (baseline e4a7e45), viewport 1280x500, scrolled to bottom, double-click on Place Order:
   - Reproduced: yes 
   - Attempts: 8
-  - What happened:  page returned to empty cart, no confirmation; console printed 0
+  - What happened: page returned to empty cart, no confirmation; console printed 0
+  - Console note on the "before" run: none
   - Evidence: evidence/manual/DEF-001-before.png
-  - After fix (same steps): onfirmation stayed; console printed - evidence: evidence/manual/DEF-001-after.png 
+  - After fix (same steps): confirmation stayed; console printed 1. Evidence: evidence/manual/DEF-001-after.png
 ```
 
 ---
@@ -107,7 +147,7 @@ MT-3 DEF-001 manual reproduction on unfixed code (baseline e4a7e45), viewport 12
 - **Title**: Confirmation lost on rapid double-click in short viewport due to layout collapse
 - **Severity**: Medium
 - **Status**: Fixed
-- **Provenance**: Discovered during exploratory probe sweep following reviewer inspection of a manual test screenshot showing the "Start new order" button in an active/highlighted focus state after order placement. Not detected by the initial three required functional checks.
+- **Provenance**: Discovered during exploratory probe sweep following reviewer inspection of a manual test screenshot showing the "Start new order" button in an active/highlighted focus state after order placement. DEF-001 was NOT detected by the initial 3 required checks; it was found by the exploratory probe after a reviewer noticed a clue in a manual test screenshot.
 - **Environment**: Desktop Chrome / Chromium, short viewport height (1280x500, scrolled to bottom).
 - **Preconditions**:
   - Application loaded on baseline commit `e4a7e45`.
@@ -138,22 +178,24 @@ Consistent with the regression tests: they fail before and pass after a change t
     newOrderBtn.disabled = false;
   }, 600);
   ```
-  Disabling `#new-order` for 600 ms cleanly absorbs trailing clicks without visual flicker or jarring layout changes. Playwright's click actions auto-wait for buttons to become enabled, so standard automated tests require no artificial sleeps.
+  Disabling `#new-order` for 600 ms cleanly absorbs trailing clicks without visual flicker or jarring layout changes; the button appears disabled for 600 ms. Playwright's click actions auto-wait for buttons to become enabled, so standard automated tests require no artificial sleeps.
 
 ### Verification Evidence
-- [evidence/DEF-001/before-tests.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/DEF-001/before-tests.txt) (Failing output on unfixed baseline `e4a7e45`)
-- [evidence/DEF-001/before-double-click.png](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/DEF-001/before-double-click.png) (Captured failure screenshot)
-- [evidence/DEF-001/before-triple-click.png](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/DEF-001/before-triple-click.png) (Captured failure screenshot)
-- [evidence/DEF-001/after-tests.txt](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/DEF-001/after-tests.txt) (Passing output on fixed code `784afa4`)
-- [evidence/manual/DEF-001-before.png](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/manual/DEF-001-before.png) (Manual reproduction on baseline)
-- [evidence/manual/DEF-001-after.png](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/evidence/manual/DEF-001-after.png) (Manual verification after fix)
-- [exploratory/evidence/1280x500-y430-double.png](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/exploratory/evidence/1280x500-y430-double.png)
-- [exploratory/evidence/1280x500-y430-triple.png](file:///c:/Users/Chinmay/Desktop/Vs%20Code/Mini_Checkout/exploratory/evidence/1280x500-y430-triple.png)
+- [evidence/DEF-001/before-tests.txt](../evidence/DEF-001/before-tests.txt) (Failing output on unfixed baseline `e4a7e45`)
+- [evidence/DEF-001/before-double-click.png](../evidence/DEF-001/before-double-click.png) (Captured failure screenshot)
+- [evidence/DEF-001/before-triple-click.png](../evidence/DEF-001/before-triple-click.png) (Captured failure screenshot)
+- [evidence/DEF-001/after-tests.txt](../evidence/DEF-001/after-tests.txt) (Passing output on fixed code `784afa4`)
+- [evidence/manual/DEF-001-before.png](../evidence/manual/DEF-001-before.png) (Manual reproduction on baseline)
+- [evidence/manual/DEF-001-after.png](../evidence/manual/DEF-001-after.png) (Manual verification after fix)
+- [exploratory/evidence/1280x500-y430-double.png](../exploratory/evidence/1280x500-y430-double.png)
+- [exploratory/evidence/1280x500-y430-triple.png](../exploratory/evidence/1280x500-y430-triple.png)
 
 ### Residual Risk
-If a customer attempts to click "Start new order" intentionally within 600 ms of the confirmation card rendering, that click will be ignored because the button is temporarily disabled. Normal human reaction time to read the confirmation and click "Start new order" is well over 600 ms.
+Assumed, not measured, that a customer takes longer than 600 ms to read the confirmation before clicking Start new order. If a customer attempts to click "Start new order" intentionally within 600 ms of the confirmation card rendering, that click will be ignored because the button is temporarily disabled.
 
 ---
 
 ## 6. Overall Assessment
-No other defects were found during automated suite runs (11/11 tests passing, 55/55 stability runs, 11/11 isolation checks), exploratory probe execution (152/152 tests passing), or manual test executions.
+No other defects were found during automated suite runs (15/15 tests passing, 75/75 stability runs, 15/15 isolation checks), exploratory probe execution (152/152 attempts passing across 22 distinct layout scenarios), or manual test executions.
+
+Regarding the tester note `"Console note on the 'before' run: none"` in the manual results: the tester confirmed that no unhandled JavaScript error or rejected promise occurred when the defect hit; the application simply executed valid code (`handleNewOrder`) in response to a real click event that landed on the shifted button.
