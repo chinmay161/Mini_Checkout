@@ -1,13 +1,55 @@
+# Command: npx playwright test -g "errors clear"
+# Timestamp: 2026-11-22T03:28:58.409Z
+# Exit Code: 1
+
+
 Running 1 test using 1 worker
-  x  1 [chromium] › tests\checkout.spec.js:294:1 › errors clear as the customer fixes them (7.0s)
 
-Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+  ✘  1 [chromium] › tests\checkout.spec.js:294:1 › errors clear as the customer fixes them (5.8s)
 
-Locator: getByTestId('name-error')
-Expected: visible
-Received: <element(s) not found>
 
-  300 |   await page.getByTestId('name-input').fill('   ');
-> 301 |   await expect(page.getByTestId('name-error')).toBeVisible();
-      |                                                ^
-  302 | 
+  1) [chromium] › tests\checkout.spec.js:294:1 › errors clear as the customer fixes them ───────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('name-error')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('name-error') with timeout 5000ms
+      - waiting for getByTestId('name-error')
+
+
+      298 |
+      299 |   await page.getByTestId('name-input').fill('   ');
+    > 300 |   await expect(page.getByTestId('name-error')).toBeVisible();
+          |                                                ^
+      301 |
+      302 |   await page.getByTestId('name-input').fill('Asha Rao');
+      303 |   await expect(page.getByTestId('name-error')).toHaveCount(0);
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:300:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\checkout-errors-clear-as-the-customer-fixes-them-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\checkout-errors-clear-as-the-customer-fixes-them-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\checkout-errors-clear-as-the-customer-fixes-them-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\checkout-errors-clear-as-the-customer-fixes-them-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\checkout-errors-clear-as-the-customer-fixes-them-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\checkout.spec.js:294:1 › errors clear as the customer fixes them ────────────
+(node:24596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

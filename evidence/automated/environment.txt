@@ -1,6 +1,8 @@
-OS:  Microsoft Windows [Version 10.0.26300.10075]
+# Environment Details
+# Captured: 2026-11-22T03:27:12.931Z
+OS Platform / Release: Windows_NT 10.0.26300 (x64)
 Node.js: v24.4.1
+Node Engines Requirement: >=20
 npm: 11.4.2
 Playwright: Version 1.65.1
 Chromium: 159.0.8154.6
-Playwright Node engines requirement: >=20 (from node_modules/@playwright/test/package.json)

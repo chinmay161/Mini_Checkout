@@ -1,0 +1,104 @@
+# Command: npx playwright test -g "short window"
+# Timestamp: 2026-11-22T03:29:15.369Z
+# Exit Code: 1
+
+
+Running 2 tests using 2 workers
+
+  ✘  1 [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation (6.0s)
+  ✘  2 [chromium] › tests\checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation (6.0s)
+
+
+  1) [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('confirmation')
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('confirmation') with timeout 5000ms
+      - waiting for getByTestId('confirmation')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      228 |   await page.mouse.dblclick(x, y);
+      229 |
+    > 230 |   await expect(page.getByTestId('confirmation')).toHaveCount(1);
+          |                                                  ^
+      231 |   await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+      232 |   await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
+      233 |   await expect(page.getByTestId('order-total')).not.toBeVisible();
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:230:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\checkout-rapid-double-clic-250be-ndow-keeps-the-confirmation-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\checkout-rapid-double-clic-250be-ndow-keeps-the-confirmation-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\checkout-rapid-double-clic-250be-ndow-keeps-the-confirmation-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\checkout-rapid-double-clic-250be-ndow-keeps-the-confirmation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\checkout-rapid-double-clic-250be-ndow-keeps-the-confirmation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('confirmation')
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('confirmation') with timeout 5000ms
+      - waiting for getByTestId('confirmation')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      251 |   await page.mouse.click(x, y);
+      252 |
+    > 253 |   await expect(page.getByTestId('confirmation')).toHaveCount(1);
+          |                                                  ^
+      254 |   await expect(page.getByTestId('order-reference')).toHaveText(/^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/);
+      255 |   await expect(page.getByTestId('cart-empty-message')).not.toBeVisible();
+      256 |   await expect(page.getByTestId('order-total')).not.toBeVisible();
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:253:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\checkout-rapid-triple-clic-cf6ff-ndow-keeps-the-confirmation-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\checkout-rapid-triple-clic-cf6ff-ndow-keeps-the-confirmation-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\checkout-rapid-triple-clic-cf6ff-ndow-keeps-the-confirmation-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\checkout-rapid-triple-clic-cf6ff-ndow-keeps-the-confirmation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\checkout-rapid-triple-clic-cf6ff-ndow-keeps-the-confirmation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation 
+    [chromium] › tests\checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation 
+(node:12548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

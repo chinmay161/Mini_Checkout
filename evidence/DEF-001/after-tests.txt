@@ -1,16 +1,15 @@
-On branch master
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	modified:   debug.log
+# Command: npx playwright test -g "short window"
+# Timestamp: 2026-11-22T03:28:31.733Z
+# Exit Code: 0
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	evidence/
-
-no changes added to commit (use "git add" and/or "git commit -a")
 
 Running 2 tests using 2 workers
 
-  ok 2 [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation (2.2s)
-  ok 1 [chromium] › tests\checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation (2.3s)
+  ✓  2 [chromium] › tests\checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation (904ms)
+  ✓  1 [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation (917ms)
+
+  2 passed (2.4s)
+(node:13816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

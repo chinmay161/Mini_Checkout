@@ -1,12 +1,48 @@
+# Command: npx playwright test -g "long unbroken name"
+# Timestamp: 2026-11-22T03:28:54.950Z
+# Exit Code: 1
+
+
 Running 1 test using 1 worker
-  x  1 [chromium] › tests\checkout.spec.js:269:1 › a very long unbroken name stays inside the confirmation card (2.0s)
 
-Error: expect(received).toBeLessThanOrEqual(expected)
+  ✘  1 [chromium] › tests\checkout.spec.js:269:1 › a very long unbroken name stays inside the confirmation card (850ms)
 
-Expected: <= 375
-Received:    2300
 
-  276 |   const nameBox = await page.getByTestId('confirmation-name').boundingBox();
-  277 |   const cardBox = await page.getByTestId('confirmation').boundingBox();
-> 278 |   expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1);
-      |                                     ^
+  1) [chromium] › tests\checkout.spec.js:269:1 › a very long unbroken name stays inside the confirmation card 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 375
+    Received:    2300
+
+      275 |   const nameBox = await page.getByTestId('confirmation-name').boundingBox();
+      276 |   const cardBox = await page.getByTestId('confirmation').boundingBox();
+    > 277 |   expect(nameBox.x + nameBox.width).toBeLessThanOrEqual(cardBox.x + cardBox.width + 1);
+          |                                     ^
+      278 | });
+      279 |
+      280 | test('pressing Enter in the name field places the order once', async ({ page }) => {
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:277:37
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\checkout-a-very-long-unbro-1fbd5-nside-the-confirmation-card-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\checkout-a-very-long-unbro-1fbd5-nside-the-confirmation-card-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\checkout-a-very-long-unbro-1fbd5-nside-the-confirmation-card-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\checkout-a-very-long-unbro-1fbd5-nside-the-confirmation-card-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\checkout-a-very-long-unbro-1fbd5-nside-the-confirmation-card-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\checkout.spec.js:269:1 › a very long unbroken name stays inside the confirmation card 
+(node:7780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

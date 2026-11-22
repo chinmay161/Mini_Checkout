@@ -1,12 +1,48 @@
+# Command: npx playwright test -g "scripted rapid submits"
+# Timestamp: 2026-11-22T03:28:35.286Z
+# Exit Code: 1
+
+
 Running 1 test using 1 worker
-  x  1 [chromium] › tests\checkout.spec.js:111:1 › scripted rapid submits still produce one confirmation (2.0s)
 
-Error: expect(received).toBe(expected) // Object.is equality
+  ✘  1 [chromium] › tests\checkout.spec.js:111:1 › scripted rapid submits still produce one confirmation (795ms)
 
-Expected: "ORD-ABCDEFGH"
-Received: "ORD-JKMNPQRS"
 
-  136 |   expect(result.first).toMatch(ordRegex);
-> 137 |   expect(result.after).toBe(result.first);
-      |                        ^
-  138 |   expect(result.count).toBe(1);
+  1) [chromium] › tests\checkout.spec.js:111:1 › scripted rapid submits still produce one confirmation 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "ORD-DXDNFMGB"
+    Received: "ORD-RDK83E5W"
+
+      136 |   const ordRegex = /^ORD-[ABCDEFGHJKMNPQRSTVWXYZ23456789]{8}$/;
+      137 |   expect(result.first).toMatch(ordRegex);
+    > 138 |   expect(result.after).toBe(result.first);
+          |                        ^
+      139 |   expect(result.count).toBe(1);
+      140 |
+      141 |   await expect(page.getByTestId('confirmation')).toHaveCount(1);
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:138:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\checkout-scripted-rapid-su-c547c-ll-produce-one-confirmation-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\checkout-scripted-rapid-su-c547c-ll-produce-one-confirmation-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\checkout-scripted-rapid-su-c547c-ll-produce-one-confirmation-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\checkout-scripted-rapid-su-c547c-ll-produce-one-confirmation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\checkout-scripted-rapid-su-c547c-ll-produce-one-confirmation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\checkout.spec.js:111:1 › scripted rapid submits still produce one confirmation 
+(node:2540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

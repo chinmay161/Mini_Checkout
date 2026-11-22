@@ -1,14 +1,55 @@
+# Command: npx playwright test -g "missing name"
+# Timestamp: 2026-11-22T03:28:38.099Z
+# Exit Code: 1
+
+
 Running 1 test using 1 worker
-  x  1 [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart (7.1s)
 
-Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+  ✘  1 [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart (5.9s)
 
-Locator: getByTestId('name-error')
-Expected: visible
-Received: <element(s) not found>
 
-  45 |   await page.getByTestId('place-order').click();
-  46 | 
-> 47 |   await expect(page.getByTestId('name-error')).toBeVisible();
-     |                                                ^
-  48 |   await expect(page.getByTestId('name-error')).toHaveText('Please enter your full name.');
+  1) [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart ────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('name-error')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('name-error') with timeout 5000ms
+      - waiting for getByTestId('name-error')
+
+
+      44 |   await page.getByTestId('place-order').click();
+      45 |
+    > 46 |   await expect(page.getByTestId('name-error')).toBeVisible();
+         |                                                ^
+      47 |   await expect(page.getByTestId('name-error')).toHaveText('Please enter your full name.');
+      48 |   await expect(page.getByTestId('name-input')).toHaveAttribute('aria-invalid', 'true');
+      49 |   await expect(page.getByTestId('confirmation')).toHaveCount(0);
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:46:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\checkout-missing-name-blocks-checkout-and-keeps-the-cart-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\checkout-missing-name-blocks-checkout-and-keeps-the-cart-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\checkout-missing-name-blocks-checkout-and-keeps-the-cart-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\checkout-missing-name-blocks-checkout-and-keeps-the-cart-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\checkout-missing-name-blocks-checkout-and-keeps-the-cart-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart ─────
+(node:7976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

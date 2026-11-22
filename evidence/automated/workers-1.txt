@@ -1,20 +1,26 @@
+# Command: npx playwright test --workers=1
+# Timestamp: 2026-11-22T03:27:49.210Z
+# Exit Code: 0
+
 
 Running 15 tests using 1 worker
 
-  ok  1 [chromium] › tests\checkout.spec.js:13:1 › successful checkout shows a single order confirmation with a reference (2.0s)
-  ok  2 [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart (392ms)
-  ok  3 [chromium] › tests\checkout.spec.js:60:1 › changing quantities updates line totals and the exact order total (419ms)
-  ok  4 [chromium] › tests\checkout.spec.js:83:1 › empty cart blocks checkout (313ms)
-  ok  5 [chromium] › tests\checkout.spec.js:95:1 › double submit produces exactly one confirmation (353ms)
-  ok  6 [chromium] › tests\checkout.spec.js:111:1 › scripted rapid submits still produce one confirmation (347ms)
-  ok  7 [chromium] › tests\checkout.spec.js:145:1 › invalid quantity reverts to the last valid value (339ms)
-  ok  8 [chromium] › tests\checkout.spec.js:167:1 › remove and start-new-order reset (1.4s)
-  ok  9 [chromium] › tests\checkout.spec.js:201:1 › empty cart and blank name show both messages and focus the first problem (296ms)
-  ok 10 [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation (346ms)
-  ok 11 [chromium] › tests\checkout.spec.js:237:1 › rapid triple-click on Place Order in a short window keeps the confirmation (342ms)
-  ok 12 [chromium] › tests\checkout.spec.js:260:1 › customer name is shown as text and never rendered as HTML (360ms)
-  ok 13 [chromium] › tests\checkout.spec.js:270:1 › a very long unbroken name stays inside the confirmation card (393ms)
-  ok 14 [chromium] › tests\checkout.spec.js:281:1 › pressing Enter in the name field places the order once (469ms)
-  ok 15 [chromium] › tests\checkout.spec.js:295:1 › errors clear as the customer fixes them (436ms)
+  ✓   1 [chromium] › tests\checkout.spec.js:13:1 › successful checkout shows a single order confirmation with a reference (921ms)
+  ✓   2 [chromium] › tests\checkout.spec.js:36:1 › missing name blocks checkout and keeps the cart (415ms)
+  ✓   3 [chromium] › tests\checkout.spec.js:60:1 › changing quantities updates line totals and the exact order total (466ms)
+  ✓   4 [chromium] › tests\checkout.spec.js:83:1 › empty cart blocks checkout (302ms)
+  ✓   5 [chromium] › tests\checkout.spec.js:95:1 › double submit produces exactly one confirmation (351ms)
+  ✓   6 [chromium] › tests\checkout.spec.js:111:1 › scripted rapid submits still produce one confirmation (280ms)
+  ✓   7 [chromium] › tests\checkout.spec.js:145:1 › invalid quantity reverts to the last valid value (358ms)
+  ✓   8 [chromium] › tests\checkout.spec.js:167:1 › remove and start-new-order reset (1.4s)
+  ✓   9 [chromium] › tests\checkout.spec.js:201:1 › empty cart and blank name show both messages and focus the first problem (286ms)
+  ✓  10 [chromium] › tests\checkout.spec.js:215:1 › rapid double-click on Place Order in a short window keeps the confirmation (328ms)
+  ✓  11 [chromium] › tests\checkout.spec.js:236:1 › rapid triple-click on Place Order in a short window keeps the confirmation (333ms)
+  ✓  12 [chromium] › tests\checkout.spec.js:259:1 › customer name is shown as text and never rendered as HTML (324ms)
+  ✓  13 [chromium] › tests\checkout.spec.js:269:1 › a very long unbroken name stays inside the confirmation card (344ms)
+  ✓  14 [chromium] › tests\checkout.spec.js:280:1 › pressing Enter in the name field places the order once (349ms)
+  ✓  15 [chromium] › tests\checkout.spec.js:294:1 › errors clear as the customer fixes them (413ms)
 
-  15 passed (7.0s)
+  15 passed (8.4s)
+(node:13616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,23 +1,57 @@
+# Command: npx playwright test -g "invalid quantity"
+# Timestamp: 2026-11-22T03:29:06.933Z
+# Exit Code: 1
+
+
 Running 1 test using 1 worker
-  x  1 [chromium] › tests\checkout.spec.js:145:1 › invalid quantity reverts to the last valid value (6.0s)
 
-Error: expect(locator).toHaveText(expected) failed
+  ✘  1 [chromium] › tests\checkout.spec.js:145:1 › invalid quantity reverts to the last valid value (5.9s)
 
-Locator:  getByTestId('order-total')
-Expected: "$12.50"
-Received: "$1,250.00"
-Timeout:  5000ms
 
-Call log:
-  - Expect "toHaveText" getByTestId('order-total') with timeout 5000ms
-  - waiting for getByTestId('order-total')
-    14 × locator resolved to <span id="order-total" aria-live="polite" class="order-total-value" data-testid="order-total">$1,250.00</span>
-       - unexpected value "$1,250.00"
+  1) [chromium] › tests\checkout.spec.js:145:1 › invalid quantity reverts to the last valid value ──
 
-  158 |   // Mid-typing "100" must not change the cart
-  159 |   await page.getByTestId('qty-notebook').fill('100');
-> 160 |   await expect(page.getByTestId('order-total')).toHaveText('$12.50');
-      |                                                 ^
-  161 |   await page.getByTestId('qty-notebook').press('Tab');
-  162 |   await expect(page.getByTestId('qty-notebook')).toHaveValue('1');
-  163 |   await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByTestId('order-total')
+    Expected: "$12.50"
+    Received: "$1,250.00"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('order-total') with timeout 5000ms
+      - waiting for getByTestId('order-total')
+        14 × locator resolved to <span id="order-total" aria-live="polite" class="order-total-value" data-testid="order-total">$1,250.00</span>
+           - unexpected value "$1,250.00"
+
+
+      157 |   // Mid-typing "100" must not change the cart
+      158 |   await page.getByTestId('qty-notebook').fill('100');
+    > 159 |   await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+          |                                                 ^
+      160 |   await page.getByTestId('qty-notebook').press('Tab');
+      161 |   await expect(page.getByTestId('qty-notebook')).toHaveValue('1');
+      162 |   await expect(page.getByTestId('order-total')).toHaveText('$12.50');
+        at C:\Users\Chinmay\Desktop\Vs Code\Mini_Checkout\tests\checkout.spec.js:159:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\checkout-invalid-quantity-reverts-to-the-last-valid-value-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\checkout-invalid-quantity-reverts-to-the-last-valid-value-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\checkout-invalid-quantity-reverts-to-the-last-valid-value-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\checkout-invalid-quantity-reverts-to-the-last-valid-value-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\checkout-invalid-quantity-reverts-to-the-last-valid-value-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\checkout.spec.js:145:1 › invalid quantity reverts to the last valid value ───
+(node:23832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

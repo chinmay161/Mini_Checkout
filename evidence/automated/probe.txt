@@ -1,6 +1,6 @@
-
-> mini-checkout@1.0.0 probe
-> playwright test -c playwright.exploratory.config.js
+# Command: npx playwright test -c playwright.exploratory.config.js
+# Timestamp: 2026-11-22T03:27:59.222Z
+# Exit Code: 0
 
 
 Running 1 test using 1 worker
@@ -169,4 +169,8 @@ MULTIPLE         : 0
 OTHER            : 0
 TOTAL ATTEMPTS   : 152
 DISTINCT SCENARIOS TESTED: 22
-  ok 1 [chromium] › exploratory\double-click-probe.spec.js:6:3 › Double-click layout-shift probe › sweep viewports, target Y coordinates, and click modes (22.5s)
+  ✓  1 [chromium] › exploratory\double-click-probe.spec.js:6:3 › Double-click layout-shift probe › sweep viewports, target Y coordinates, and click modes (20.2s)
+
+  1 passed (22.7s)
+(node:15972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
