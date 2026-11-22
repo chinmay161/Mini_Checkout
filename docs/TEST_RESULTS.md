@@ -19,9 +19,9 @@ The automated test suite was executed across multiple worker configurations and 
 
 | Test Run Type | Command | Total Tests | Passed | Failed | Flakes | Evidence File |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Full Test Suite** | `npm test` | see SUMMARY | see SUMMARY | see SUMMARY | see SUMMARY | [evidence/automated/npm-test.txt](../evidence/automated/npm-test.txt) |
-| **Stability Run** | `npx playwright test --repeat-each=5` | see SUMMARY | see SUMMARY | see SUMMARY | see SUMMARY | [evidence/automated/repeat-each-5.txt](../evidence/automated/repeat-each-5.txt) |
-| **Isolation Run** | `npx playwright test --workers=1` | see SUMMARY | see SUMMARY | see SUMMARY | see SUMMARY | [evidence/automated/workers-1.txt](../evidence/automated/workers-1.txt) |
+| **Full Test Suite** | `npm test` | 15 | 15 | 0 | 0 | [evidence/automated/npm-test.txt](../evidence/automated/npm-test.txt) |
+| **Stability Run** | `npx playwright test --repeat-each=5` | 75 | 75 | 0 | 0 | [evidence/automated/repeat-each-5.txt](../evidence/automated/repeat-each-5.txt) |
+| **Isolation Run** | `npx playwright test --workers=1` | 15 | 15 | 0 | 0 | [evidence/automated/workers-1.txt](../evidence/automated/workers-1.txt) |
 
 ### 2.1 Exploratory Probe Results
 The exploratory layout probe executes a matrix of viewports, vertical click coordinates, and click modes using real mouse input (`page.mouse`):
