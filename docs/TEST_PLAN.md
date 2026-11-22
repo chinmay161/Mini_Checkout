@@ -44,9 +44,9 @@
 | :--- | :--- | :--- | :--- |
 | **Wrong totals** | `changing quantities updates line totals and the exact order total` | — | Covered |
 | **Empty cart order** | `empty cart blocks checkout`<br>`empty cart and blank name show both messages and focus the first problem` | `MT-1` | Covered |
-| **Blank / whitespace name** | `missing name blocks checkout and keeps the cart`<br>`empty cart and blank name show both messages and focus the first problem` | — | Covered |
-| **Duplicate order on submit** | `double submit produces exactly one confirmation`<br>`scripted rapid submits still produce one confirmation` | `MT-2a`, `MT-2b` | Covered |
-| **Confirmation lost (DEF-001)** | `rapid double-click on Place Order in a short window keeps the confirmation`<br>`rapid triple-click on Place Order in a short window keeps the confirmation` | `MT-3` | Covered |
+| **Blank / whitespace name** | `missing name blocks checkout and keeps the cart`<br>`empty cart and blank name show both messages and focus the first problem` | — | Covered (+ Mutation M2) |
+| **Duplicate order on submit** | `double submit produces exactly one confirmation`<br>`scripted rapid submits still produce one confirmation` | `MT-2a`, `MT-2b` | Covered (+ Mutation M1) |
+| **Confirmation lost (DEF-001)** | `rapid double-click on Place Order in a short window keeps the confirmation`<br>`rapid triple-click on Place Order in a short window keeps the confirmation` | `MT-3` | Covered (+ Mutation M7) |
 | **Customer input lost** | `missing name blocks checkout and keeps the cart`<br>`empty cart blocks checkout` | `MT-1` | Covered |
 | **Invalid quantity input** | `invalid quantity reverts to the last valid value` | — | Covered (+ Mutation M6) |
 | **Stale state on reset** | `remove and start-new-order reset` | — | Covered |
@@ -411,11 +411,7 @@ All automated tests are located in [`tests/checkout.spec.js`](../tests/checkout.
 - Playwright Chromium test runner is installed and initialized.
 
 ### 6.2 Exit Criteria
-- 100% of the 15 automated test cases pass in `npm test`.
-- Stress test `npx playwright test --repeat-each=5` completes with 75/75 passes (0 flakes).
-- Single-worker isolation test `npx playwright test --workers=1` completes with 15/15 passes.
-- Exploratory probe `npm run probe` completes with `CONFIRMATION_LOST: 0`.
-- All 6 mutation checks (M1 through M6) fail as expected against modified application code and restore cleanly.
+- All tests pass as recorded in [evidence/SUMMARY.md](../evidence/SUMMARY.md); all 7 mutations KILLED; probe CONFIRMATION_LOST is 0.
 - Manual verification scenarios MT-1, MT-2a, MT-2b, and MT-3 pass.
 
 ### 6.3 Defect Reporting Protocol

@@ -60,6 +60,8 @@ mini-checkout/
 ├── server.js                             # Zero-dependency Node.js static file server
 ├── playwright.config.js                  # Playwright Chromium test configuration
 ├── playwright.exploratory.config.js      # Configuration for the exploratory probe
+├── scripts/
+│   └── collect-evidence.js               # Machine-generates all evidence files and SUMMARY.md
 ├── public/
 │   ├── index.html                        # Semantic HTML with accessibility handles and testids
 │   ├── styles.css                        # CSS layout, focus outlines, and responsive styles
@@ -72,13 +74,35 @@ mini-checkout/
 │       ├── 1280x500-y430-double.png
 │       └── 1280x500-y430-triple.png
 ├── evidence/
+│   ├── SUMMARY.md                        # Machine-generated execution summary table
 │   ├── automated/                        # Verbatim outputs from automated test suites
 │   ├── DEF-001/                          # Defect DEF-001 before/after test logs and screenshots
 │   ├── manual/                           # Manual exploratory test run evidence screenshots
-│   └── mutation/                         # Mutation testing runs and restored suite verification
+│   └── mutation/                         # 7 mutation testing runs and restored suite verification
 └── docs/
     ├── TEST_PLAN.md                      # Risk register, coverage matrix, and test specifications
     └── TEST_RESULTS.md                   # Automated, manual, mutation, and defect write-ups
+```
+
+## Reproducing the Evidence
+
+All automated test evidence, stability benchmarks, exploratory probe captures, DEF-001 before/after regression logs, and 7 mutation checks are machine-generated and fully reproducible via:
+```bash
+npm run evidence
+```
+
+What this script does:
+- Verifies that the git working tree for `public/` and `tests/` is clean.
+- Captures runtime environment details (`node`, `npm`, Playwright, OS, and Chromium versions) into `evidence/automated/environment.txt`.
+- Executes the automated test suite (`npx playwright test`), stability run (`--repeat-each=5`), single-worker isolation (`--workers=1`), and exploratory layout shift probe (`playwright.exploratory.config.js`).
+- Executes DEF-001 regression validation by temporarily writing the baseline `app.js` (`git show e4a7e45:public/app.js`), verifying failure (Red), restoring clean code, and verifying pass (Green).
+- Performs 7 table-driven mutation checks (M1 through M7), ensuring each mutation is cleanly killed by targeted tests and verified restored byte-for-byte.
+- Re-runs the full test suite and verifies `git diff --exit-code -- public` is clean.
+- Automatically compiles all exit codes, test counts, probe totals, and mutation failure signatures into [`evidence/SUMMARY.md`](evidence/SUMMARY.md).
+
+Execution takes a few minutes because it runs all test suites and mutations. To preview the execution plan and verify that all mutation targets match uniquely without running tests or modifying files, run:
+```bash
+node scripts/collect-evidence.js --dry-run
 ```
 
 ## Automated Test Suite
